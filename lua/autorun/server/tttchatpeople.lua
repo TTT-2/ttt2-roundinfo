@@ -57,6 +57,23 @@ function TellRoles()
 end
 hook.Add("TTTBeginRound", "TTTChatStats", TellRoles)
 
+function TellKiller(victim, weapon, killer)
+    net.Start("tttRsDeathNotify")
+    
+    if killer:IsPlayer() and killer ~= victim then
+        net.WriteInt(1, 4)
+        net.WriteUInt(killer:GetRole() - 1, ROLE_BITS)
+        net.WriteEntity(killer)
+    elseif killer:IsPlayer() and killer == victim then
+        net.WriteInt(2, 4)
+    else
+        net.WriteInt(3, 4)
+    end
+    
+    net.Send(victim)
+end
+hook.Add("PlayerDeath", "TTTChatStats", TellKiller)
+
 function TellRolesNames()
     for _, v in pairs(player.GetAll()) do
         net.Start("tttRsTellPost")
@@ -65,5 +82,3 @@ function TellRolesNames()
     end
 end
 hook.Add("TTTEndRound", "TTTChatStats", TellRolesNames)
-
--- TODO support translation
