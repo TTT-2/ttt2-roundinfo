@@ -80,7 +80,7 @@ else
                 role = rolename
             })
             
-            chat.AddText(txt)
+            chat.AddText(default, txt)
         elseif killerType == 2 then
             chat.AddText(default, T("ttt_rs_suicideText"))
         elseif killerType == 3 then
