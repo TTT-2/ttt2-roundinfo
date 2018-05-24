@@ -23,6 +23,8 @@ else
         local PT = LANG.GetParamTranslation
 		local roles = net.ReadTable()
         local spectators = net.ReadUInt(9)
+		
+		hook.Run("TTTAModifyRolesTable", roles)
 
         local txt = PT("ttt_rs_preText", {traits = roles[ROLE_TRAITOR], innos = roles[ROLE_INNOCENT], specs = spectators})
         
