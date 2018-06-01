@@ -24,6 +24,12 @@ else
 		local roles = net.ReadTable()
         local spectators = net.ReadUInt(9)
 		
+		for role in pairs(table.Copy(roles)) do
+			if role == ROLE_DETECTIVE then
+				roles[ROLE_INNOCENT] = roles[ROLE_INNOCENT] + roles[ROLE_DETECTIVE]
+			end
+		end
+		
 		hook.Run("TTTAModifyRolesTable", roles)
 
         local txt = PT("ttt_rs_preText", {traits = roles[ROLE_TRAITOR], innos = roles[ROLE_INNOCENT], specs = spectators})
