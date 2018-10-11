@@ -37,7 +37,7 @@ else
 		local killerType = net.ReadUInt(4)
 
 		if killerType == 1 then
-			local role = net.ReadUInt(ROLE_BITS) + 1
+			local role = net.ReadUInt(ROLE_BITS)
 			local killer = net.ReadEntity()
 
 			local rolename = "unknown"
