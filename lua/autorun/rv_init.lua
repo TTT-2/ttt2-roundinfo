@@ -109,24 +109,34 @@ else
 		chat.AddText(defcolor, txt)
 
 		for k, v in pairs(rolesnames) do
+			txt = ""
 			if v then
-				for _, w in ipairs do
-					w = "%1%" .. w .. "%0%"
+
+				local list = string.Explode(",", v)
+
+				for k2, v2 in ipairs(list) do
+					local temp = "%1%" .. v2 .. "%0%"
+					if k2 > 1 then
+						v = v .. ", " .. temp
+					elseif k2 == 1 then
+						v = temp
+					end
 				end
 
 				if not TTT2 then
 					if k == ROLE_INNOCENT then
 						txt = ("2%" .. T("innocent") .. "%0%: " .. v)
-						rolecolor = TTT2 and INNOCENT.color or not TTT2 and Color(55, 170, 50, 255)
+						rolecolor = Color(55, 170, 50, 255)
 					elseif k == ROLE_TRAITOR then
 						txt = ("2%" .. T("traitor") .. "%0%: " .. v)
-						rolecolor = TTT2 and TRAITOR.color or not TTT2 and Color(180, 50, 40, 255)
+						rolecolor = Color(180, 50, 40, 255)
 					elseif k == ROLE_DETECTIVE then
 						txt = ("2%" .. T("detective") .. "%0%: " .. v)
-						rolecolor = TTT2 and DETECTIVE.color or not TTT2 and Color(50, 60, 180, 255)
+						rolecolor = Color(50, 60, 180, 255)
 					end
 				else
 					local rd = GetRoleByIndex(k)
+					rolecolor = rd.color
 
 					txt = ("2%" .. T(rd.name) .. "%0%: " .. v)
 				end
