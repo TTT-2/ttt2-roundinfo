@@ -134,13 +134,13 @@ else
 
 			local arr = string.Explode("%", txt)
 
-			for k, v in ipairs(arr) do
-				if v == "0" then
-					arr[k] = defcolor
-				elseif v == "1" then
-					arr[k] = namecolor
-				elseif v == "2" then
-					arr[k] = rolecolor
+			for k2, v2 in ipairs(arr) do
+				if v2 == "0" then
+					arr[k2] = defcolor
+				elseif v2 == "1" then
+					arr[k2] = namecolor
+				elseif v2 == "2" then
+					arr[k2] = rolecolor
 				end
 			end
 
