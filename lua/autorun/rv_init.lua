@@ -117,7 +117,7 @@ else
 				for k2, v2 in ipairs(list) do
 					local temp = "%1%" .. v2 .. "%0%"
 					if k2 > 1 then
-						v = v .. ", " .. temp
+						v = v .. "," .. temp
 					elseif k2 == 1 then
 						v = temp
 					end
