@@ -1,3 +1,13 @@
+CreateConVar("ttt_rolesetup_tell_pre_roles", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar("ttt_rolesetup_tell_killer", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar("ttt_rolesetup_tell_after_roles", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+
+hook.Add("TTTUlxInitRWCVar", "TTTRolesetupInitRWCVar", function(name)
+	ULib.replicatedWritableCvar("ttt_rolesetup_tell_pre_roles", "rep_ttt_rolesetup_tell_pre_roles", GetConVar("ttt_rolesetup_tell_pre_roles"):GetInt(), true, false, name)
+	ULib.replicatedWritableCvar("ttt_rolesetup_tell_killer", "rep_ttt_rolesetup_tell_killer", GetConVar("ttt_rolesetup_tell_killer"):GetInt(), true, false, name)
+	ULib.replicatedWritableCvar("ttt_rolesetup_tell_after_roles", "rep_ttt_rolesetup_tell_after_roles", GetConVar("ttt_rolesetup_tell_after_roles"):GetInt(), true, false, name)
+end)
+
 if SERVER then
 	AddCSLuaFile()
 
@@ -5,6 +15,31 @@ if SERVER then
 	util.AddNetworkString("tttRsTellPost")
 	util.AddNetworkString("tttRsDeathNotify")
 else
+
+	hook.Add("TTTUlxModifySettings", "TTTRolesetupModifySettings", function(name)
+		local tttrspnl = xlib.makelistlayout{w = 415, h = 318, parent = xgui.null}
+
+		local tttrsclp = vgui.Create("DCollapsibleCategory", tttrspnl)
+		tttrsclp:SetSize(390, 70)
+		tttrsclp:SetExpanded(1)
+		tttrsclp:SetLabel("Rolesetup")
+
+		local tttrslst = vgui.Create("DPanelList", tttrsclp)
+		tttrslst:SetPos(5, 25)
+		tttrslst:SetSize(390, 70)
+		tttrslst:SetSpacing(5)
+
+		local tttrsdh = xlib.makecheckbox{label = "Tell Roles at beginning (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_pre_roles", parent = tttrslst}
+		tttrslst:AddItem(tttrsdh)
+		local tttrsdh = xlib.makecheckbox{label = "Tell Killer (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_killer", parent = tttrslst}
+		tttrslst:AddItem(tttrsdh)
+		local tttrsdh = xlib.makecheckbox{label = "Tell Roles at end (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_after_roles", parent = tttrslst}
+		tttrslst:AddItem(tttrsdh)
+
+		xgui.hookEvent("onProcessModules", nil, tttrspnl.processModules)
+		xgui.addSubModule("Rolesetup", tttrspnl, nil, name)
+	end)
+
 	hook.Add("Initialize", "TTTInitRS", function()
 		LANG.AddToLanguage("English", "ttt_rs_preText", "0%There are %1%{traits} traitors%0%, %2%{innos} innocents%0% and %3%{specs} spectators%0% this round.")
 		LANG.AddToLanguage("English", "ttt_rs_postText", "The role distribution this round:")
@@ -21,6 +56,9 @@ else
 
 	local defcolor = Color(255, 255, 255, 255)
 	local namecolor = Color(255, 255, 0, 255)
+	local traitcolor = Color(180, 50, 40, 255)
+	local innocolor = Color(55, 170, 50, 255)
+	local detecolor = Color(50, 60, 180, 255)
 
 	net.Receive("tttRsTellPre", function(len)
 		local PT = LANG.GetParamTranslation
@@ -34,9 +72,9 @@ else
 			if v == "0" then
 				arr[k] = defcolor
 			elseif v == "1" then
-				arr[k] = TTT2 and TRAITOR.color or not TTT2 and Color(180, 50, 40, 255)
+				arr[k] = TTT2 and TRAITOR.color or not TTT2 and traitcolor
 			elseif v == "2" then
-				arr[k] = TTT2 and INNOCENT.color or not TTT2 and Color(55, 170, 50, 255)
+				arr[k] = TTT2 and INNOCENT.color or not TTT2 and innocolor
 			elseif v == "3" then
 				arr[k] = team.GetColor(TEAM_SPEC)
 			end
@@ -63,13 +101,13 @@ else
 			if not ROLES then
 				if role == ROLE_INNOCENT then
 					rolename = T("innocent")
-					rolecolor = TTT2 and INNOCENT.color or not TTT2 and Color(55, 170, 50, 255)
+					rolecolor = TTT2 and INNOCENT.color or not TTT2 and innocolor
 				elseif role == ROLE_TRAITOR then
 					rolename = T("traitor")
-					rolecolor = TTT2 and TRAITOR.color or not TTT2 and Color(180, 50, 40, 255)
+					rolecolor = TTT2 and TRAITOR.color or not TTT2 and traitcolor
 				elseif role == ROLE_DETECTIVE then
 					rolename = T("detective")
-					rolecolor = TTT2 and DETECTIVE.color or not TTT2 and Color(50, 60, 180, 255)
+					rolecolor = TTT2 and DETECTIVE.color or not TTT2 and detecolor
 				end
 			else
 				rolename = T(GetRoleByIndex(role).name)
@@ -126,13 +164,13 @@ else
 				if not TTT2 then
 					if k == ROLE_INNOCENT then
 						txt = ("2%" .. T("innocent") .. "%0%: " .. v)
-						rolecolor = Color(55, 170, 50, 255)
+						rolecolor = innocolor
 					elseif k == ROLE_TRAITOR then
 						txt = ("2%" .. T("traitor") .. "%0%: " .. v)
-						rolecolor = Color(180, 50, 40, 255)
+						rolecolor = traitcolor
 					elseif k == ROLE_DETECTIVE then
 						txt = ("2%" .. T("detective") .. "%0%: " .. v)
-						rolecolor = Color(50, 60, 180, 255)
+						rolecolor = detecolor
 					end
 				else
 					local rd = GetRoleByIndex(k)

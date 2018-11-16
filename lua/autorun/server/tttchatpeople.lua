@@ -1,4 +1,5 @@
 function TellRoles()
+	if not GetConVar("ttt_rolesetup_tell_pre_roles"):GetBool() then return end
 	local rolesnames = {}
 	local roles = {}
 	local spectators = 0
@@ -53,6 +54,8 @@ end
 hook.Add("TTTBeginRound", "TTTChatStats", TellRoles)
 
 function TellKiller(victim, weapon, killer)
+	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool() then return end
+
 	net.Start("tttRsDeathNotify")
 
 	if killer:IsPlayer() and killer ~= victim then
@@ -76,6 +79,7 @@ end
 hook.Add("PlayerDeath", "TTTChatStats", TellKiller)
 
 function TellRolesNames()
+	if not GetConVar("ttt_rolesetup_tell_after_roles"):GetBool() then return end
 	for _, v in pairs(player.GetAll()) do
 		net.Start("tttRsTellPost")
 		net.WriteTable(rolesnamestext)
