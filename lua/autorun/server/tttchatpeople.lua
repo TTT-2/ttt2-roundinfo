@@ -54,7 +54,7 @@ end
 hook.Add("TTTBeginRound", "TTTChatStats", TellRoles)
 
 function TellKiller(victim, weapon, killer)
-	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool() then return end
+	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool() or (killer.IsGhost and killer:IsGhost()) or (victim.IsGhost and killer:IsGhost()) then return end
 
 	net.Start("tttRsDeathNotify")
 
