@@ -15,7 +15,6 @@ if SERVER then
 	util.AddNetworkString("tttRsTellPost")
 	util.AddNetworkString("tttRsDeathNotify")
 else
-
 	hook.Add("TTTUlxModifySettings", "TTTRolesetupModifySettings", function(name)
 		local tttrspnl = xlib.makelistlayout{w = 415, h = 318, parent = xgui.null}
 
@@ -31,10 +30,12 @@ else
 
 		local tttrsdh = xlib.makecheckbox{label = "Tell Roles at beginning (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_pre_roles", parent = tttrslst}
 		tttrslst:AddItem(tttrsdh)
-		local tttrsdh = xlib.makecheckbox{label = "Tell Killer (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_killer", parent = tttrslst}
-		tttrslst:AddItem(tttrsdh)
-		local tttrsdh = xlib.makecheckbox{label = "Tell Roles at end (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_after_roles", parent = tttrslst}
-		tttrslst:AddItem(tttrsdh)
+
+		local tttrsdh2 = xlib.makecheckbox{label = "Tell Killer (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_killer", parent = tttrslst}
+		tttrslst:AddItem(tttrsdh2)
+
+		local tttrsdh3 = xlib.makecheckbox{label = "Tell Roles at end (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_after_roles", parent = tttrslst}
+		tttrslst:AddItem(tttrsdh3)
 
 		xgui.hookEvent("onProcessModules", nil, tttrspnl.processModules)
 		xgui.addSubModule("Rolesetup", tttrspnl, nil, name)
