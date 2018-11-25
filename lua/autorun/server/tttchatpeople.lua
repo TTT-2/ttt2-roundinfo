@@ -38,23 +38,36 @@ function TellRoles()
 
 	rolesnamestext = {}
 
-	for k, v in pairs(rolesnames) do
-		if v and #v > 0 then
-			rolesnamestext[k] = table.concat(v, ", ")
+	for role, nicks in pairs(rolesnames) do
+		if nicks and #nicks > 0 then
+			rolesnamestext[role] = table.concat(nicks, ", ")
 		end
 	end
 
-	for _, v in ipairs(player.GetAll()) do
-		net.Start("tttRsTellPre")
-		net.WriteTable(roles)
-		net.WriteUInt(spectators, 9)
-		net.Send(v)
+	local roles_size = 0
+
+	for _ in pairs(roles) do
+		roles_size = roles_size + 1
 	end
+
+	net.Start("tttRsTellPre")
+	net.WriteUInt(roles_size, ROLE_BITS)
+
+	for role, amount in pairs(roles) do
+		net.WriteUInt(role, ROLE_BITS)
+		net.WriteUInt(amount, 32)
+	end
+
+	net.WriteUInt(spectators, 9)
+	net.Broadcast()
 end
 hook.Add("TTTBeginRound", "TTTChatStats", TellRoles)
 
 function TellKiller(victim, weapon, killer)
-	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool() or IsValid(killer) and killer.IsGhost and killer:IsGhost() or IsValid(victim) and victim.IsGhost and victim:IsGhost() then return end
+	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool()
+	or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
+	or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost()
+	then return end
 
 	net.Start("tttRsDeathNotify")
 
@@ -81,8 +94,20 @@ hook.Add("PlayerDeath", "TTTChatStats", TellKiller)
 function TellRolesNames()
 	if not GetConVar("ttt_rolesetup_tell_after_roles"):GetBool() then return end
 	for _, v in pairs(player.GetAll()) do
+		local amount = 0
+
+		for _ in pairs(rolesnamestext) do
+			amount = amount + 1
+		end
+
 		net.Start("tttRsTellPost")
-		net.WriteTable(rolesnamestext)
+		net.WriteUInt(amount, ROLE_BITS)
+
+		for role, nicks in pairs(rolesnamestext) do
+			net.WriteUInt(role, ROLE_BITS)
+			net.WriteString(nicks)
+		end
+
 		net.Send(v)
 	end
 end

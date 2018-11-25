@@ -63,9 +63,14 @@ else
 
 	net.Receive("tttRsTellPre", function(len)
 		local PT = LANG.GetParamTranslation
-		local roles = net.ReadTable()
-		local spectators = net.ReadUInt(9)
+		local tblSize = net.ReadUInt(ROLE_BITS)
+		local roles = {}
 
+		for i = 1, tblSize do
+			roles[net.ReadUInt(ROLE_BITS)] = net.ReadUInt(32)
+		end
+
+		local spectators = net.ReadUInt(9)
 		local txt = PT("ttt_rs_preText", {traits = roles[ROLE_TRAITOR], innos = roles[ROLE_INNOCENT], specs = spectators})
 		local arr = string.Explode("%", txt)
 
@@ -139,22 +144,25 @@ else
 
 	net.Receive("tttRsTellPost", function(len)
 		local T = LANG.GetTranslation
-
-		local rolesnames = net.ReadTable()
+		local rolesnames = {}
 		local rolecolor = defcolor
-
 		local txt = T("ttt_rs_postText")
+		local roles_size = net.ReadUInt(ROLE_BITS)
+
+		for i = 1, roles_size do
+			rolesnames[net.ReadUInt(ROLE_BITS)] = net.ReadString()
+		end
 
 		chat.AddText(defcolor, txt)
 
 		for k, v in pairs(rolesnames) do
 			txt = ""
 			if v then
-
 				local list = string.Explode(",", v)
 
 				for k2, v2 in ipairs(list) do
 					local temp = "%1%" .. v2 .. "%0%"
+
 					if k2 > 1 then
 						v = v .. "," .. temp
 					elseif k2 == 1 then
@@ -175,6 +183,7 @@ else
 					end
 				else
 					local rd = GetRoleByIndex(k)
+
 					rolecolor = rd.color
 
 					txt = ("2%" .. T(rd.name) .. "%0%: " .. v)
