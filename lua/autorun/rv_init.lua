@@ -102,6 +102,8 @@ else
 			local role = net.ReadUInt(ROLE_BITS)
 			local killer = net.ReadEntity()
 
+			if not IsValid(killer) or not killer:IsPlayer() then return end
+
 			local rolename = "unknown"
 
 			if not ROLES then

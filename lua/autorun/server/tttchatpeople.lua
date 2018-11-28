@@ -71,18 +71,20 @@ function TellKiller(victim, weapon, killer)
 
 	net.Start("tttRsDeathNotify")
 
-	if killer:IsPlayer() and killer ~= victim then
-		net.WriteUInt(1, 4)
+	if IsValid(killer) and killer:IsPlayer() then
+		if killer ~= victim then
+			net.WriteUInt(1, 4)
 
-		if TTT2 then
-			net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
+			if TTT2 then
+				net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
+			else
+				net.WriteUInt(killer:GetRole(), 2)
+			end
+
+			net.WriteEntity(killer)
 		else
-			net.WriteUInt(killer:GetRole(), 2)
+			net.WriteUInt(2, 4)
 		end
-
-		net.WriteEntity(killer)
-	elseif killer:IsPlayer() and killer == victim then
-		net.WriteUInt(2, 4)
 	else
 		net.WriteUInt(3, 4)
 	end
@@ -93,7 +95,7 @@ hook.Add("PlayerDeath", "TTTChatStats", TellKiller)
 
 function TellRolesNames()
 	if not GetConVar("ttt_rolesetup_tell_after_roles"):GetBool() then return end
-	for _, v in pairs(player.GetAll()) do
+	for _, v in ipairs(player.GetAll()) do
 		local amount = 0
 
 		for _ in pairs(rolesnamestext) do
