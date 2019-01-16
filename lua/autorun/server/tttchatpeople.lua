@@ -1,5 +1,4 @@
 function TellRoles()
-	if not GetConVar("ttt_rolesetup_tell_pre_roles"):GetBool() then return end
 
 	local rolesnames = {}
 	local roles = {}
@@ -44,6 +43,8 @@ function TellRoles()
 			rolesnamestext[role] = table.concat(nicks, ", ")
 		end
 	end
+
+	if not GetConVar("ttt_rolesetup_tell_pre_roles"):GetBool() then return end
 
 	local roles_size = 0
 
