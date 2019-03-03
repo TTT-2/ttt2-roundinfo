@@ -64,14 +64,14 @@ else
 	net.Receive("tttRsTellPre", function(len)
 		local PT = LANG.GetParamTranslation
 		local tblSize = net.ReadUInt(ROLE_BITS)
-		local roles = {}
+		local rls = {}
 
 		for i = 1, tblSize do
-			roles[net.ReadUInt(ROLE_BITS)] = net.ReadUInt(32)
+			rls[net.ReadUInt(ROLE_BITS)] = net.ReadUInt(32)
 		end
 
 		local spectators = net.ReadUInt(9)
-		local txt = PT("ttt_rs_preText", {traits = roles[ROLE_TRAITOR], innos = roles[ROLE_INNOCENT], specs = spectators})
+		local txt = PT("ttt_rs_preText", {traits = rls[ROLE_TRAITOR], innos = rls[ROLE_INNOCENT], specs = spectators})
 		local arr = string.Explode("%", txt)
 
 		for k, v in ipairs(arr) do
@@ -106,7 +106,7 @@ else
 
 			local rolename = "unknown"
 
-			if not ROLES then
+			if not TTT2 then
 				if role == ROLE_INNOCENT then
 					rolename = T("innocent")
 					rolecolor = TTT2 and INNOCENT.color or not TTT2 and innocolor

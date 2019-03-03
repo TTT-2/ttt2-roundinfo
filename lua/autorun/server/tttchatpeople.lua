@@ -1,20 +1,20 @@
 function TellRoles()
 
 	local rolesnames = {}
-	local roles = {}
+	local rls = {}
 	local spectators = 0
 
 	if not TTT2 then
-		roles[ROLE_INNOCENT] = 0
-		roles[ROLE_TRAITOR] = 0
-		roles[ROLE_DETECTIVE] = 0 -- not needed
+		rls[ROLE_INNOCENT] = 0
+		rls[ROLE_TRAITOR] = 0
+		rls[ROLE_DETECTIVE] = 0 -- not needed
 
 		rolesnames[ROLE_INNOCENT] = {}
 		rolesnames[ROLE_TRAITOR] = {}
 		rolesnames[ROLE_DETECTIVE] = {}
 	else
 		for _, v in pairs(GetRoles()) do
-			roles[v.index] = 0
+			rls[v.index] = 0
 
 			rolesnames[v.index] = {}
 		end
@@ -30,11 +30,11 @@ function TellRoles()
 
 			role = role == ROLE_DETECTIVE and ROLE_INNOCENT or role
 
-			roles[role] = (roles[role] or 0) + 1
+			rls[role] = (rls[role] or 0) + 1
 		end
 	end
 
-	hook.Run("TTTAModifyRolesTable", roles)
+	hook.Run("TTTAModifyRolesTable", rls)
 
 	rolesnamestext = {}
 
@@ -48,14 +48,14 @@ function TellRoles()
 
 	local roles_size = 0
 
-	for _ in pairs(roles) do
+	for _ in pairs(rls) do
 		roles_size = roles_size + 1
 	end
 
 	net.Start("tttRsTellPre")
 	net.WriteUInt(roles_size, ROLE_BITS)
 
-	for role, amount in pairs(roles) do
+	for role, amount in pairs(rls) do
 		net.WriteUInt(role, ROLE_BITS)
 		net.WriteUInt(amount, 32)
 	end
