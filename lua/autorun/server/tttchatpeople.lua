@@ -28,6 +28,10 @@ function TellRoles()
 			table.insert(rolesnames[role], v:Nick())
 
 			role = role == ROLE_DETECTIVE and ROLE_INNOCENT or role
+			
+			if TTT2 then
+				role = v:HasTeam(TEAM_TRAITOR) and ROLE_TRAITOR or ROLE_INNOCENT
+			end
 
 			rls[role] = (rls[role] or 0) + 1
 		end
