@@ -67,7 +67,8 @@ else
 		local rls = {}
 
 		for i = 1, tblSize do
-			rls[net.ReadUInt(ROLE_BITS)] = net.ReadUInt(32)
+			local role = net.ReadUInt(ROLE_BITS)
+			rls[role] = net.ReadUInt(32)
 		end
 
 		local spectators = net.ReadUInt(9)
