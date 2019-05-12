@@ -1,10 +1,12 @@
 CreateConVar("ttt_rolesetup_tell_pre_roles", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
 CreateConVar("ttt_rolesetup_tell_killer", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar("ttt_rolesetup_killer_popup", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
 CreateConVar("ttt_rolesetup_tell_after_roles", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
 
 hook.Add("TTTUlxInitRWCVar", "TTTRolesetupInitRWCVar", function(name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_pre_roles", "rep_ttt_rolesetup_tell_pre_roles", GetConVar("ttt_rolesetup_tell_pre_roles"):GetInt(), true, false, name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_killer", "rep_ttt_rolesetup_tell_killer", GetConVar("ttt_rolesetup_tell_killer"):GetInt(), true, false, name)
+	ULib.replicatedWritableCvar("ttt_rolesetup_killer_popup", "ttt_rolesetup_killer_popup", GetConVar("ttt_rolesetup_killer_popup"):GetInt(), true, false, name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_after_roles", "rep_ttt_rolesetup_tell_after_roles", GetConVar("ttt_rolesetup_tell_after_roles"):GetInt(), true, false, name)
 end)
 
@@ -14,28 +16,32 @@ if SERVER then
 	util.AddNetworkString("tttRsTellPre")
 	util.AddNetworkString("tttRsTellPost")
 	util.AddNetworkString("tttRsDeathNotify")
+	util.AddNetworkString("tttRsDeathNotifyEnhanced")
 else
 	hook.Add("TTTUlxModifySettings", "TTTRolesetupModifySettings", function(name)
 		local tttrspnl = xlib.makelistlayout{w = 415, h = 318, parent = xgui.null}
 
 		local tttrsclp = vgui.Create("DCollapsibleCategory", tttrspnl)
-		tttrsclp:SetSize(390, 70)
+		tttrsclp:SetSize(390, 100)
 		tttrsclp:SetExpanded(1)
 		tttrsclp:SetLabel("Rolesetup")
 
 		local tttrslst = vgui.Create("DPanelList", tttrsclp)
 		tttrslst:SetPos(5, 25)
-		tttrslst:SetSize(390, 70)
+		tttrslst:SetSize(390, 100)
 		tttrslst:SetSpacing(5)
 
-		local tttrsdh = xlib.makecheckbox{label = "Tell Roles at beginning (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_pre_roles", parent = tttrslst}
+		local tttrsdh = xlib.makecheckbox{label = "Tell Roles at Roundstart (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_pre_roles", parent = tttrslst}
 		tttrslst:AddItem(tttrsdh)
 
-		local tttrsdh2 = xlib.makecheckbox{label = "Tell Killer (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_killer", parent = tttrslst}
+		local tttrsdh2 = xlib.makecheckbox{label = "Tell Killerinfo in Chat (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_killer", parent = tttrslst}
 		tttrslst:AddItem(tttrsdh2)
 
-		local tttrsdh3 = xlib.makecheckbox{label = "Tell Roles at end (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_after_roles", parent = tttrslst}
+		local tttrsdh3 = xlib.makecheckbox{label = "Show Killerinfo Popup (Def. 1)", repconvar = "ttt_rolesetup_killer_popup", parent = tttrslst}
 		tttrslst:AddItem(tttrsdh3)
+
+		local tttrsdh4 = xlib.makecheckbox{label = "Tell Roles at Roundend (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_after_roles", parent = tttrslst}
+		tttrslst:AddItem(tttrsdh4)
 
 		xgui.hookEvent("onProcessModules", nil, tttrspnl.processModules)
 		xgui.addSubModule("Rolesetup", tttrspnl, nil, name)
@@ -143,6 +149,51 @@ else
 
 		chat.AddText(unpack(arr))
 	end)
+
+	------------------
+
+	net.Receive("tttRsDeathNotifyEnhanced", function(len)
+		chat.AddText("------")
+
+		local killer_type = net.ReadUInt(2)
+		chat.AddText("killer_type: ", tostring(killer_type))
+		if killer_type == 3 then
+			chat.AddText("killed by world!")
+			return
+		end
+
+		local damage_type = net.ReadInt(32)
+		chat.AddText("damage_type: ", tostring(damage_type)) -- https://wiki.garrysmod.com/page/Enums/DMG
+
+		if killer_type == 2 then
+			chat.AddText("killed by yourself!")
+			return
+		end
+
+		local killer_ent = net.ReadEntity()
+		local killer_role_id = net.ReadUInt(ROLE_BITS)
+
+		local killer_nick = killer_ent:Nick()
+		local killer_role = GetRoleByIndex(role).name
+		local killer_role_color = GetRoleByIndex(role).color
+		local killer_health = killer_ent:Health()
+		local killer_health_max = killer_ent:GetMaxHealth()
+
+		local wep_class = net.ReadEntity()
+		local wep_clip = net.ReadUInt(8)
+		local wep_ammo = net.ReadUInt(8)
+		local was_headshot = net.ReadBool()
+
+		chat.AddText("name: ", killer_nick, ", role: ", killer_role, ", color: ", tostring(killer_role_color))
+		chat.AddText("was headshot: ", tostring(was_headshot))
+		chat.AddText("weapon class: ", tostring(wep_class))
+		chat.AddText("weapon: ", tostring(wep_class:GetPrintName()))
+		chat.AddText("weapon language: ", LANG.TryTranslation(wep_class:GetPrintName() or wep_class.PrintName or "...") )
+		chat.AddText("ammo: ", tostring(wep_clip), " / ", tostring(wep_ammo))
+		chat.AddText("killer HP: ", tostring(killer_health), " / ", tostring(killer_health_max))		
+	end)
+
+	-------------------
 
 	net.Receive("tttRsTellPost", function(len)
 		local T = LANG.GetTranslation

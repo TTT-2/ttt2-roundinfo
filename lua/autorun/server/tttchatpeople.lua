@@ -98,6 +98,75 @@ function TellKiller(victim, weapon, killer)
 end
 hook.Add("PlayerDeath", "TTTChatStats", TellKiller)
 
+------------------------
+
+function TellKillerEnhanced(victim, attacker, dmg)
+	local killer = dmg:GetAttacker()
+
+	if not GetConVar("ttt_rolesetup_killer_popup"):GetBool()
+	or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
+	or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
+	then return end
+
+	-- start network transmission
+	net.Start("tttRsDeathNotifyEnhanced")
+
+	-- killed by world
+	if not IsValid(killer) or not killer:IsPlayer() then
+		net.WriteUInt(3, 2)
+		net.Send(victim)
+		return
+	end
+	
+	-- killed by yourself
+	if killer == victim then
+		net.WriteUInt(2, 2)
+
+		-- send damage type (WORKAROUND, codeduplication)
+		net.WriteInt(dmg:GetDamageType(), 32)
+		net.Send(victim)
+		return
+	end
+
+	-- killed by killer
+	net.WriteUInt(1, 2)
+
+	-- send damage type
+	local damage_type = dmg:GetDamageType()
+	net.WriteInt(damage_type, 32)
+
+	net.WriteEntity(killer)
+	net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
+
+	-- no weapon was used
+	if not dmg:IsDamageType(DMG_BULLET) then
+		net.Send(victim)
+		return 
+	end
+
+	--local wep_class = attacker:GetActiveWeapon()
+	local wep_class = util.WeaponFromDamage(dmg)
+
+	if not IsValid(wep_class) then
+		net.Send(victim)
+		return
+	end
+
+	local was_headshot = victim.was_headshot and dmg:IsBulletDamage()
+	local wep_clip = wep_class:Clip1() -1
+	local wep_ammo = wep_class:Ammo1()
+
+	net.WriteEntity(wep_class)
+	net.WriteUInt(wep_clip, 8)
+	net.WriteUInt(wep_ammo, 8)
+	net.WriteBool(was_headshot)
+
+	net.Send(victim)
+end
+hook.Add("DoPlayerDeath", "TTTChatStatsEnhanced", TellKillerEnhanced)
+
+---------------------------------
+
 function TellRolesNames()
 	if not GetConVar("ttt_rolesetup_tell_after_roles"):GetBool() or not rolesnamestext then return end
 
