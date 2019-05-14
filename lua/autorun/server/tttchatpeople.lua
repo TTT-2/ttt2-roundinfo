@@ -1,23 +1,28 @@
 function TellRoles()
 	local rolesnames = {}
 	local rls = {}
+	local printrls = {}
 	local spectators = 0
-
+	
 	if not TTT2 then
 		rls[ROLE_INNOCENT] = 0
 		rls[ROLE_TRAITOR] = 0
-		rls[ROLE_DETECTIVE] = 0 -- not needed
-
+		
 		rolesnames[ROLE_INNOCENT] = {}
 		rolesnames[ROLE_TRAITOR] = {}
 		rolesnames[ROLE_DETECTIVE] = {}
 	else
 		for _, v in pairs(GetRoles()) do
 			rls[v.index] = 0
-
+			printrls[v.index] = false
+			
 			rolesnames[v.index] = {}
 		end
 	end
+	
+	printrls[ROLE_INNOCENT] = true
+	printrls[ROLE_TRAITOR] = true
+	
 
 	for _, v in ipairs(player.GetAll()) do
 		if not v:Alive() or not v:IsTerror() then
@@ -27,14 +32,19 @@ function TellRoles()
 
 			table.insert(rolesnames[role], v:Nick())
 
-			role = role == ROLE_DETECTIVE and ROLE_INNOCENT or role
-
 			rls[role] = (rls[role] or 0) + 1
 		end
 	end
 
-	hook.Run("TTTAModifyRolesTable", rls)
+	hook.Run("TTTAModifyRolesTable", rls, printrls)
 
+	--add non used roles to innocent
+	for role, do_print in pairs(printrls) do
+		if not do_print then
+			rls[ROLE_INNOCENT] = rls[ROLE_INNOCENT] + (rls[role] or 0)
+		end
+	end
+	
 	rolesnamestext = {}
 
 	for role, nicks in pairs(rolesnames) do
