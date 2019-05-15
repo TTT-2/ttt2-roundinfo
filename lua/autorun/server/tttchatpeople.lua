@@ -111,6 +111,8 @@ function TellKillerEnhanced(victim, attacker, dmg)
 	-- start network transmission
 	net.Start("tttRsDeathNotifyEnhanced")
 
+	net.WriteUInt(GetConVar("ttt_rolesetup_killer_popup_time"):GetInt(), 16)
+
 	-- killed by world
 	if not IsValid(killer) or not killer:IsPlayer() then
 		net.WriteUInt(3, 2)
@@ -154,11 +156,15 @@ function TellKillerEnhanced(victim, attacker, dmg)
 
 	local was_headshot = victim.was_headshot and dmg:IsBulletDamage()
 	local wep_clip = wep_class:Clip1() -1
+	local wep_clip_max = wep_class:GetMaxClip1()
 	local wep_ammo = wep_class:Ammo1()
+	local wep_icon_path = wep_class.Icon or wep_class.material or "vgui/ttt/icon_id" -- ToDo check if Icon exists
 
 	net.WriteEntity(wep_class)
 	net.WriteUInt(wep_clip, 8)
+	net.WriteUInt(wep_clip_max, 8)
 	net.WriteUInt(wep_ammo, 8)
+	net.WriteString(wep_icon_path)
 	net.WriteBool(was_headshot)
 
 	net.Send(victim)

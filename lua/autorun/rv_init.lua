@@ -1,12 +1,14 @@
-CreateConVar("ttt_rolesetup_tell_pre_roles", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
-CreateConVar("ttt_rolesetup_tell_killer", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
-CreateConVar("ttt_rolesetup_killer_popup", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
-CreateConVar("ttt_rolesetup_tell_after_roles", "1", {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar("ttt_rolesetup_tell_pre_roles", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar("ttt_rolesetup_tell_killer", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar("ttt_rolesetup_killer_popup", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar("ttt_rolesetup_killer_popup_time", 10, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
+CreateConVar("ttt_rolesetup_tell_after_roles", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
 
 hook.Add("TTTUlxInitRWCVar", "TTTRolesetupInitRWCVar", function(name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_pre_roles", "rep_ttt_rolesetup_tell_pre_roles", GetConVar("ttt_rolesetup_tell_pre_roles"):GetInt(), true, false, name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_killer", "rep_ttt_rolesetup_tell_killer", GetConVar("ttt_rolesetup_tell_killer"):GetInt(), true, false, name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_killer_popup", "ttt_rolesetup_killer_popup", GetConVar("ttt_rolesetup_killer_popup"):GetInt(), true, false, name)
+	ULib.replicatedWritableCvar("ttt_rolesetup_killer_popup_time", "ttt_rolesetup_killer_popup_time", GetConVar("ttt_rolesetup_killer_popup_time"):GetInt(), true, false, name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_after_roles", "rep_ttt_rolesetup_tell_after_roles", GetConVar("ttt_rolesetup_tell_after_roles"):GetInt(), true, false, name)
 end)
 
@@ -155,9 +157,13 @@ else
 	net.Receive("tttRsDeathNotifyEnhanced", function(len)
 		chat.AddText("------")
 
+		local display_time = net.ReadUInt(16)
+		chat.AddText("display_time: ", tostring(display_time))
+
 		local killer_type = net.ReadUInt(2)
 		chat.AddText("killer_type: ", tostring(killer_type))
 		if killer_type == 3 then
+			KILLER_POPUP:DisplayPopupWorld(display_time)
 			chat.AddText("killed by world!")
 			return
 		end
@@ -166,6 +172,7 @@ else
 		chat.AddText("damage_type: ", tostring(damage_type)) -- https://wiki.garrysmod.com/page/Enums/DMG
 
 		if killer_type == 2 then
+			KILLER_POPUP:DisplayPopupSelf(display_time)
 			chat.AddText("killed by yourself!")
 			return
 		end
@@ -174,23 +181,36 @@ else
 		local killer_role_id = net.ReadUInt(ROLE_BITS)
 
 		local killer_nick = killer_ent:Nick()
-		local killer_role = GetRoleByIndex(role).name
+		local killer_sid64 = killer_ent:SteamID64()
+		local killer_role = GetRoleByIndex(role).abbr
 		local killer_role_color = GetRoleByIndex(role).color
 		local killer_health = killer_ent:Health()
 		local killer_health_max = killer_ent:GetMaxHealth()
 
+		KILLER_POPUP:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_color, killer_health, killer_health_max)
+		
+		chat.AddText("name: ", killer_nick, ", role: ", killer_role, ", color: ", tostring(killer_role_color))
+		chat.AddText("killer HP: ", tostring(killer_health), " / ", tostring(killer_health_max))		
+
 		local wep_class = net.ReadEntity()
+		if not IsValid(wep_class) then
+			KILLER_POPUP:DisplayPopupKillerNoWeapon(display_time)
+			return
+		end
 		local wep_clip = net.ReadUInt(8)
+		local wep_clip_max = net.ReadUInt(8)
 		local wep_ammo = net.ReadUInt(8)
+		local wep_icon_path = net.ReadString()
 		local was_headshot = net.ReadBool()
 
-		chat.AddText("name: ", killer_nick, ", role: ", killer_role, ", color: ", tostring(killer_role_color))
-		chat.AddText("was headshot: ", tostring(was_headshot))
-		chat.AddText("weapon class: ", tostring(wep_class))
-		chat.AddText("weapon: ", tostring(wep_class:GetPrintName()))
-		chat.AddText("weapon language: ", LANG.TryTranslation(wep_class:GetPrintName() or wep_class.PrintName or "...") )
-		chat.AddText("ammo: ", tostring(wep_clip), " / ", tostring(wep_ammo))
-		chat.AddText("killer HP: ", tostring(killer_health), " / ", tostring(killer_health_max))		
+		KILLER_POPUP:RegisterWeapon(wep_class:GetPrintName() or wep_class.PrintName or "...", wep_clip, wep_clip_max, wep_ammo, wep_icon_path, was_headshot)
+		KILLER_POPUP:DisplayPopupKillerWeapon(display_time)
+
+		--chat.AddText("was headshot: ", tostring(was_headshot))
+		--chat.AddText("weapon class: ", tostring(wep_class))
+		--chat.AddText("weapon: ", tostring(wep_class:GetPrintName()))
+		--chat.AddText("weapon language: ", LANG.TryTranslation(wep_class:GetPrintName() or wep_class.PrintName or "...") )
+		--chat.AddText("ammo: ", tostring(wep_clip), " / ", tostring(wep_ammo))
 	end)
 
 	-------------------
