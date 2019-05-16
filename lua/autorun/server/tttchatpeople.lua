@@ -108,8 +108,19 @@ function TellKillerEnhanced(victim, attacker, dmg)
 
 	-- start network transmission
 	net.Start("tttRsDeathNotifyEnhanced")
-
 	net.WriteUInt(GetConVar("ttt_rolesetup_killer_popup_time"):GetInt(), 16)
+	
+	local damage_type = dmg:GetDamageType()
+
+	-- special case: drowning and falldamage should be "killed by yourself"
+	if dmg:IsDamageType(DMG_DROWN) or dmg:IsDamageType(DMG_FALL) then
+		net.WriteUInt(2, 2)
+
+		-- send damage type (WORKAROUND, codeduplication)
+		net.WriteInt(damage_type, 32)
+		net.Send(victim)
+		return
+	end
 
 	-- killed by world
 	if not IsValid(killer) or not killer:IsPlayer() then
@@ -123,7 +134,7 @@ function TellKillerEnhanced(victim, attacker, dmg)
 		net.WriteUInt(2, 2)
 
 		-- send damage type (WORKAROUND, codeduplication)
-		net.WriteInt(dmg:GetDamageType(), 32)
+		net.WriteInt(damage_type, 32)
 		net.Send(victim)
 		return
 	end
@@ -132,7 +143,6 @@ function TellKillerEnhanced(victim, attacker, dmg)
 	net.WriteUInt(1, 2)
 
 	-- send damage type
-	local damage_type = dmg:GetDamageType()
 	net.WriteInt(damage_type, 32)
 
 	net.WriteEntity(killer)
