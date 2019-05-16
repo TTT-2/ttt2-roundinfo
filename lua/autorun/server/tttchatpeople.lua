@@ -69,10 +69,9 @@ end
 hook.Add("TTTBeginRound", "TTTChatStats", TellRoles)
 
 function TellKiller(victim, weapon, killer)
-	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool()
-	or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
-	or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
-	then return end
+	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool() then return end
+	--or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
+	--or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
 
 	net.Start("tttRsDeathNotify")
 
@@ -103,10 +102,9 @@ hook.Add("PlayerDeath", "TTTChatStats", TellKiller)
 function TellKillerEnhanced(victim, attacker, dmg)
 	local killer = dmg:GetAttacker()
 
-	if not GetConVar("ttt_rolesetup_killer_popup"):GetBool()
-	or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
-	or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
-	then return end
+	if not GetConVar("ttt_rolesetup_killer_popup"):GetBool() then return end
+	--or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
+	--or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
 
 	-- start network transmission
 	net.Start("tttRsDeathNotifyEnhanced")
@@ -141,30 +139,37 @@ function TellKillerEnhanced(victim, attacker, dmg)
 	net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
 
 	-- no weapon was used
-	if not dmg:IsDamageType(DMG_BULLET) then
-		net.Send(victim)
-		return 
-	end
+	--if not dmg:IsDamageType(DMG_BULLET) then
+	--	net.Send(victim)
+	--	return 
+	--end
 
 	--local wep_class = attacker:GetActiveWeapon()
 	local wep_class = util.WeaponFromDamage(dmg)
 
-	if not IsValid(wep_class) then
+	if not IsValid(wep_class) or not wep_class then
 		net.Send(victim)
 		return
 	end
-
-	local was_headshot = victim.was_headshot and dmg:IsBulletDamage()
-	local wep_clip = wep_class:Clip1() -1
-	local wep_clip_max = wep_class:GetMaxClip1()
-	local wep_ammo = wep_class:Ammo1()
-	local wep_icon_path = wep_class.Icon or wep_class.material or "vgui/ttt/icon_id" -- ToDo check if Icon exists
-
+	
+	local was_headshot, wep_clip, wep_clip_max, wep_ammo
+	
+	if wep_class['Clip1'] == nil or wep_class['GetMaxClip1'] == nil or wep_class['Ammo1'] == nil then -- weapon without any clip like a thrown knife
+		was_headshot = false
+		wep_clip = -1
+		wep_clip_max = -1
+		wep_ammo = -1
+	else -- default case
+		was_headshot = victim.was_headshot and dmg:IsBulletDamage()
+		wep_clip = wep_class:Clip1() -1
+		wep_clip_max = wep_class:GetMaxClip1()
+		wep_ammo = wep_class:Ammo1()
+	end
+		
 	net.WriteEntity(wep_class)
-	net.WriteUInt(wep_clip, 8)
-	net.WriteUInt(wep_clip_max, 8)
-	net.WriteUInt(wep_ammo, 8)
-	net.WriteString(wep_icon_path)
+	net.WriteInt(wep_clip, 16)
+	net.WriteInt(wep_clip_max, 16)
+	net.WriteInt(wep_ammo, 16)
 	net.WriteBool(was_headshot)
 
 	net.Send(victim)

@@ -47,9 +47,17 @@ if CLIENT then -- CLIENT
 		local pos = self:GetPos()
 		local size = self:GetSize()
 		local x, y = pos.x, pos.y
-        local w, h = size.w, size.h
+		local w, h = size.w, size.h
+		
+		self:DrawHelper(x, y, w, h)
+        
+        -- draw border and shadow
+        self:DrawLines(x, y, w, h, self.basecolor.a)
+	end
 
-        -- params
+	-- added to a helper function to use return instead of nested ifs
+	function HUDELEMENT:DrawHelper(x, y, w, h)
+		-- params
         local edge_padding = 39
         local box_size = 78
         local inner_padding = 14
@@ -77,7 +85,12 @@ if CLIENT then -- CLIENT
         self:DrawLines(x + 47, y + 47, 64, 64, self.basecolor.a)
 
         surface.SetDrawColor(KILLER_POPUP.data.killer_role_color)
-        surface.DrawRect(x + edge_padding, y + 124, box_size, h - 124)
+		surface.DrawRect(x + edge_padding, y + 124, box_size, h - 124)
+		
+		if KILLER_POPUP.data.mode == 'killer_world' then
+			
+			return
+		end
 
         -- killer role
         util.DrawFilteredTexturedRect(x + edge_padding + 0.5 * (box_size - 40) , y + edge_padding + box_size + inner_padding, 40, 40, KILLER_POPUP.data.killer_role_icon)
@@ -86,15 +99,27 @@ if CLIENT then -- CLIENT
         local nx = x + edge_padding + box_size + inner_padding
         local ny = y + edge_padding + inner_padding - 4
 
-        local killer_name = string.upper(KILLER_POPUP.data.killer_name)
-        self:AdvancedText(killer_name, "PureSkinBar", nx, ny, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
-
+		local killer_name = string.upper(KILLER_POPUP.data.killer_name)
+		self:AdvancedText(killer_name, "PureSkinBar", nx, ny, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+		
         -- killer hp
-        local bh = 26 --  bar height
-        local bx = nx
-        local by = y + edge_padding + box_size - bh - inner_padding
-        local bw = w - (bx - x) - inner_padding  -- bar width
-        self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_POPUP.data.killer_health / KILLER_POPUP.data.killer_max_health, self.scale, "HEALTH: " .. KILLER_POPUP.data.killer_health)
+		local bh = 26 --  bar height
+		local bx = nx
+		local by = y + edge_padding + box_size - bh - inner_padding
+		local bw = w - (bx - x) - inner_padding  -- bar width
+		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_POPUP.data.killer_health / KILLER_POPUP.data.killer_health_max, self.scale, "HEALTH: " .. KILLER_POPUP.data.killer_health)
+
+		if KILLER_POPUP.data.mode == 'killer_self' or KILLER_POPUP.data.mode == 'killer_no_weapon' then
+			local wx = x + edge_padding + box_size + inner_padding
+			local wy = y + edge_padding + box_size + inner_padding
+
+			util.DrawFilteredTexturedRect(wx, wy, 32, 32, KILLER_POPUP.data.damage_type_icon)
+			self:DrawLines(wx, wy, 32, 32, self.basecolor.a * 0.75)
+
+			local damage_type_name = string.upper(KILLER_POPUP.data.damage_type_name)
+			self:AdvancedText(damage_type_name, "PureSkinBar", wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+			return
+		end
 
         -- killer weapon info
         local wx = x + edge_padding + box_size + inner_padding
@@ -111,20 +136,18 @@ if CLIENT then -- CLIENT
 
         -- killer weapon headshot
         if KILLER_POPUP.data.killer_weapon_head then
-            util.DrawFilteredTexturedRect(wx + 42 + weapon_name_width + 22, wy + 3, 24, 24, self.icon_headshot, 180, {r=240, g=80, b=45})
+            util.DrawFilteredTexturedRect(wx + 42 + weapon_name_width + 28, wy + 3, 24, 24, self.icon_headshot, 180, {r=240, g=80, b=45})
         end
 
         -- killer ammo
         local ah = 26 --  bar height
         local ax = wx
         local ay = y + h - inner_padding - ah
-        local aw = w - (wx - x) - inner_padding  -- bar width
-        if KILLER_POPUP.data.clip ~= -1 then
+		local aw = w - (wx - x) - inner_padding  -- bar width
+
+        if KILLER_POPUP.data.killer_weapon_clip >= 0 then
             local text = string.format("%i + %02i", KILLER_POPUP.data.killer_weapon_clip, KILLER_POPUP.data.killer_weapon_ammo)
             self:DrawBar(ax, ay, aw, ah, Color(238, 151, 0), KILLER_POPUP.data.killer_weapon_clip / (KILLER_POPUP.data.killer_weapon_clip_max), self.scale, text)
         end
-        
-        -- draw border and shadow
-        self:DrawLines(x, y, w, h, self.basecolor.a)
 	end
 end
