@@ -4,11 +4,11 @@ CreateConVar("ttt_rolesetup_killer_popup", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
 CreateConVar("ttt_rolesetup_killer_popup_time", 10, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
 CreateConVar("ttt_rolesetup_tell_after_roles", 1, {FCVAR_NOTIFY, FCVAR_ARCHIVE})
 
-hook.Add("TTTUlxInitRWCVar", "TTTRolesetupInitRWCVar", function(name)
+hook.Add("TTTUlxInitCustomCVar", "TTTRolesetupInitRWCVar", function(name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_pre_roles", "rep_ttt_rolesetup_tell_pre_roles", GetConVar("ttt_rolesetup_tell_pre_roles"):GetInt(), true, false, name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_killer", "rep_ttt_rolesetup_tell_killer", GetConVar("ttt_rolesetup_tell_killer"):GetInt(), true, false, name)
-	ULib.replicatedWritableCvar("ttt_rolesetup_killer_popup", "ttt_rolesetup_killer_popup", GetConVar("ttt_rolesetup_killer_popup"):GetInt(), true, false, name)
-	ULib.replicatedWritableCvar("ttt_rolesetup_killer_popup_time", "ttt_rolesetup_killer_popup_time", GetConVar("ttt_rolesetup_killer_popup_time"):GetInt(), true, false, name)
+	ULib.replicatedWritableCvar("ttt_rolesetup_killer_popup", "rep_ttt_rolesetup_killer_popup", GetConVar("ttt_rolesetup_killer_popup"):GetInt(), true, false, name)
+	ULib.replicatedWritableCvar("ttt_rolesetup_killer_popup_time", "rep_ttt_rolesetup_killer_popup_time", GetConVar("ttt_rolesetup_killer_popup_time"):GetInt(), true, false, name)
 	ULib.replicatedWritableCvar("ttt_rolesetup_tell_after_roles", "rep_ttt_rolesetup_tell_after_roles", GetConVar("ttt_rolesetup_tell_after_roles"):GetInt(), true, false, name)
 end)
 
@@ -39,7 +39,7 @@ else
 		local tttrsdh2 = xlib.makecheckbox{label = "Tell Killerinfo in Chat (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_killer", parent = tttrslst}
 		tttrslst:AddItem(tttrsdh2)
 
-		local tttrsdh3 = xlib.makecheckbox{label = "Show Killerinfo Popup (Def. 1)", repconvar = "ttt_rolesetup_killer_popup", parent = tttrslst}
+		local tttrsdh3 = xlib.makecheckbox{label = "Show Killerinfo Popup (Def. 1)", repconvar = "rep_ttt_rolesetup_killer_popup", parent = tttrslst}
 		tttrslst:AddItem(tttrsdh3)
 
 		local tttrsdh4 = xlib.makecheckbox{label = "Tell Roles at Roundend (Def. 1)", repconvar = "rep_ttt_rolesetup_tell_after_roles", parent = tttrslst}
