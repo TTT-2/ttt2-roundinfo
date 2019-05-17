@@ -175,4 +175,8 @@ if CLIENT then
 			chat.AddText(unpack(arr))
 		end
 	end)
+
+	net.Receive('tttRsPlayerRespawn', function(len)
+		KILLER_INFO:HidePopup()
+	end)
 end

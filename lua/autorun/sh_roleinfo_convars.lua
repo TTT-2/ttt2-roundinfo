@@ -14,11 +14,6 @@ end)
 
 if SERVER then
 	AddCSLuaFile()
-
-	util.AddNetworkString('tttRsTellPre')
-	util.AddNetworkString('tttRsTellPost')
-	util.AddNetworkString('tttRsDeathNotify')
-	util.AddNetworkString('tttRsDeathNotifyEnhanced')
 end
 
 if CLIENT then

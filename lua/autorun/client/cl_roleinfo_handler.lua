@@ -117,7 +117,6 @@ if CLIENT then
 
     hook.Add('TTTPrepareRound', 'hide_popup_round_prepare', function() KILLER_INFO:HidePopup() end)
     hook.Add('TTTBeginRound', 'hide_popup_round_begin', function() KILLER_INFO:HidePopup() end)
-    hook.Add('PlayerSpawn', 'hide_popup_player_spawn', function() KILLER_INFO:HidePopup() end)
 
 
 
@@ -126,14 +125,14 @@ if CLIENT then
     function KILLER_INFO:PrintKillerWeapon()
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
-        local txt = LANG.GetParamTranslation('ttt_rs_killText', {killer = self.data.killer_name, role = T(self.data.killer_role_lang), killtype = self.data.killer_weapon_name})
+        local txt = LANG.GetParamTranslation('ttt_rs_killText', {killer = self.data.killer_name, role = LANG.GetTranslation(self.data.killer_role_lang), killtype = self.data.killer_weapon_name})
         self:PrintColor(txt)
     end
 
     function KILLER_INFO:PrintKillerNoWeapon()
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
-        local txt = LANG.GetParamTranslation('ttt_rs_killText', {killer = self.data.killer_name, role = T(self.data.killer_role_lang), killtype = self.data.damage_type_name})
+        local txt = LANG.GetParamTranslation('ttt_rs_killText', {killer = self.data.killer_name, role = LANG.GetTranslation(self.data.killer_role_lang), killtype = self.data.damage_type_name})
         self:PrintColor(txt)
     end
 

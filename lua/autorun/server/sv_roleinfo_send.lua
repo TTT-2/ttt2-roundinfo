@@ -1,4 +1,10 @@
-if SERVER then 
+if SERVER then
+	util.AddNetworkString('tttRsTellPre')
+	util.AddNetworkString('tttRsTellPost')
+	util.AddNetworkString('tttRsDeathNotify')
+	util.AddNetworkString('tttRsDeathNotifyEnhanced')
+	util.AddNetworkString('tttRsPlayerRespawn')
+	
 	-- ROUND SETUP INFORMATION
 	function TellRoles()
 		local rolesnames = {}
@@ -81,7 +87,7 @@ if SERVER then
 
 		-- start network transmission
 		net.Start("tttRsDeathNotify")
-		net.WriteUInt(GetConVar("ttt_roleinfo_killer_popup_time"):GetInt(), 16)
+		net.WriteUInt(GetConVar("ttt_roleinfo_popup_killer_time"):GetInt(), 16)
 		net.WriteBool(GetConVar("ttt_roleinfo_announce_killer"):GetBool())
 		net.WriteBool(GetConVar("ttt_roleinfo_popup_killer"):GetBool())
 		
@@ -167,4 +173,10 @@ if SERVER then
 		end
 	end
 	hook.Add("TTTEndRound", "TTTChatStats", TellRolesNames)
+
+	-- SEND PLAYER SPAWN TO CLIENT TO CLOSE POPUP
+	hook.Add('PlayerSpawn', 'hide_popup_player_spawn', function(player)
+		net.Start("tttRsPlayerRespawn")
+		net.Send(player)
+	end)
 end
