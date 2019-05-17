@@ -69,9 +69,10 @@ end
 hook.Add("TTTBeginRound", "TTTChatStats", TellRoles)
 
 function TellKiller(victim, weapon, killer)
-	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool() then return end
-	--or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
-	--or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
+	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool()
+		or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
+		or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
+	then return end
 
 	net.Start("tttRsDeathNotify")
 
@@ -102,22 +103,23 @@ hook.Add("PlayerDeath", "TTTChatStats", TellKiller)
 function TellKillerEnhanced(victim, attacker, dmg)
 	local killer = dmg:GetAttacker()
 
-	if not GetConVar("ttt_rolesetup_killer_popup"):GetBool() then return end
-	--or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
-	--or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
+	if not GetConVar("ttt_rolesetup_killer_popup"):GetBool()
+		or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
+		or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
+	then return end
 
 	-- start network transmission
 	net.Start("tttRsDeathNotifyEnhanced")
 	net.WriteUInt(GetConVar("ttt_rolesetup_killer_popup_time"):GetInt(), 16)
 	
+	-- send damage type
 	local damage_type = dmg:GetDamageType()
+	net.WriteUInt(damage_type, 32)
 
 	-- special case: drowning and falldamage should be "killed by yourself"
 	if dmg:IsDamageType(DMG_DROWN) or dmg:IsDamageType(DMG_FALL) then
 		net.WriteUInt(2, 2)
 
-		-- send damage type (WORKAROUND, codeduplication)
-		net.WriteInt(damage_type, 32)
 		net.Send(victim)
 		return
 	end
@@ -132,9 +134,7 @@ function TellKillerEnhanced(victim, attacker, dmg)
 	-- killed by yourself
 	if killer == victim then
 		net.WriteUInt(2, 2)
-
-		-- send damage type (WORKAROUND, codeduplication)
-		net.WriteInt(damage_type, 32)
+		
 		net.Send(victim)
 		return
 	end
@@ -142,17 +142,8 @@ function TellKillerEnhanced(victim, attacker, dmg)
 	-- killed by killer
 	net.WriteUInt(1, 2)
 
-	-- send damage type
-	net.WriteInt(damage_type, 32)
-
 	net.WriteEntity(killer)
 	net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
-
-	-- no weapon was used
-	--if not dmg:IsDamageType(DMG_BULLET) then
-	--	net.Send(victim)
-	--	return 
-	--end
 
 	--local wep_class = attacker:GetActiveWeapon()
 	local wep_class = util.WeaponFromDamage(dmg)

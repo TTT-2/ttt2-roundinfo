@@ -155,22 +155,11 @@ else
 	------------------
 
 	net.Receive('tttRsDeathNotifyEnhanced', function(len)
-		chat.AddText('------')
-
+		-- how long should the panel be displayed
 		local display_time = net.ReadUInt(16)
-		chat.AddText('display_time: ', tostring(display_time))
-
-		local killer_type = net.ReadUInt(2)
-		chat.AddText('killer_type: ', tostring(killer_type))
-		if killer_type == 3 then
-			KILLER_POPUP:DisplayPopupWorld(display_time)
-			chat.AddText('killed by world!')
-			return
-		end
-
-		local damage_type = net.ReadInt(32)
-		chat.AddText('damage_type: ', tostring(damage_type)) -- https://wiki.garrysmod.com/page/Enums/DMG
-
+		
+		-- damage type: https://wiki.garrysmod.com/page/Enums/DMG
+		local damage_type = net.ReadUInt(32)
 		local damage_type_icon_path = 'vgui/ttt/icon_skull' -- TODO get description from confirm panel
 		local damage_type_name = 'unknown'
 		if bit.band(damage_type, DMG_CRUSH) == DMG_CRUSH then
@@ -189,19 +178,23 @@ else
 			damage_type_icon_path = 'vgui/ttt/icon_splode'
 			damage_type_name = 'explosion'
 		end
-		--if bit.band(damage_type, DMG_CLUB) == DMG_CLUB then
-		--	damage_type_icon_path = 'vgui/ttt/icon_cbar'
-		--	damage_type_name = 'crowbar'
-		--end
+		if bit.band(damage_type, DMG_DROWN) == DMG_DROWN then
+			damage_type_icon_path = 'vgui/ttt/icon_drown'
+			damage_type_name = 'drowned'
+		end
 		KILLER_POPUP:RegisterDamageType(damage_type_icon_path, damage_type_name)
-
-		if killer_type == 2 then
-			KILLER_POPUP:DisplayPopupSelf(display_time)
-			chat.AddText('killed by yourself!')
+		
+		-- check killer type before displaying UI element
+		local killer_type = net.ReadUInt(2)
+		if killer_type == 3 then
+			KILLER_POPUP:DisplayPopupWorld(display_time)
 			return
 		end
 
-		
+		if killer_type == 2 then
+			KILLER_POPUP:DisplayPopupSelf(display_time)
+			return
+		end
 
 		local killer_ent = net.ReadEntity()
 		local killer_role_id = net.ReadUInt(ROLE_BITS)
@@ -214,21 +207,17 @@ else
 		local killer_health = killer_ent:Health()
 		local killer_health_max = killer_ent:GetMaxHealth()
 		
-
 		KILLER_POPUP:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_color, killer_health, killer_health_max)
-		
-		chat.AddText('name: ', killer_nick, ', role: ', killer_role, ', color: ', tostring(killer_role_color))
-		chat.AddText('killer HP: ', tostring(killer_health), ' / ', tostring(killer_health_max))		
 
 		local wep_class = net.ReadEntity()
 		if not IsValid(wep_class) then
 			KILLER_POPUP:DisplayPopupKillerNoWeapon(display_time)
 			return
 		end
+
 		local wep_clip = net.ReadInt(16)
 		local wep_clip_max = net.ReadInt(16)
 		local wep_ammo = net.ReadInt(16)
-		--local wep_icon_path = net.ReadString()
 		local was_headshot = net.ReadBool()
 
 		local wep_name = ''
@@ -240,12 +229,6 @@ else
 
 		KILLER_POPUP:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_class.Icon or 'vgui/ttt/icon_nades', was_headshot)
 		KILLER_POPUP:DisplayPopupKillerWeapon(display_time)
-
-		--chat.AddText('was headshot: ', tostring(was_headshot))
-		--chat.AddText('weapon class: ', tostring(wep_class))
-		--chat.AddText('weapon: ', tostring(wep_class:GetPrintName()))
-		--chat.AddText('weapon language: ', LANG.TryTranslation(wep_class:GetPrintName() or wep_class.PrintName or '...') )
-		--chat.AddText('ammo: ', tostring(wep_clip), ' / ', tostring(wep_ammo))
 	end)
 
 	-------------------

@@ -86,41 +86,36 @@ if CLIENT then -- CLIENT
 
         surface.SetDrawColor(KILLER_POPUP.data.killer_role_color)
 		surface.DrawRect(x + edge_padding, y + 124, box_size, h - 124)
-		
-		if KILLER_POPUP.data.mode == 'killer_world' then
-			
-			return
-		end
-
-        -- killer role
-        util.DrawFilteredTexturedRect(x + edge_padding + 0.5 * (box_size - 40) , y + edge_padding + box_size + inner_padding, 40, 40, KILLER_POPUP.data.killer_role_icon)
 
         -- killer name
         local nx = x + edge_padding + box_size + inner_padding
         local ny = y + edge_padding + inner_padding - 4
-
+        
 		local killer_name = string.upper(KILLER_POPUP.data.killer_name)
 		self:AdvancedText(killer_name, "PureSkinBar", nx, ny, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
-		
+        
         -- killer hp
 		local bh = 26 --  bar height
 		local bx = nx
 		local by = y + edge_padding + box_size - bh - inner_padding
 		local bw = w - (bx - x) - inner_padding  -- bar width
 		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_POPUP.data.killer_health / KILLER_POPUP.data.killer_health_max, self.scale, "HEALTH: " .. KILLER_POPUP.data.killer_health)
-
-		if KILLER_POPUP.data.mode == 'killer_self' or KILLER_POPUP.data.mode == 'killer_no_weapon' then
+        
+		if KILLER_POPUP.data.mode == 'killer_self' or KILLER_POPUP.data.mode == 'killer_no_weapon' or KILLER_POPUP.data.mode == 'killer_world' then
 			local wx = x + edge_padding + box_size + inner_padding
 			local wy = y + edge_padding + box_size + inner_padding
-
+            
 			util.DrawFilteredTexturedRect(wx, wy, 32, 32, KILLER_POPUP.data.damage_type_icon)
 			self:DrawLines(wx, wy, 32, 32, self.basecolor.a * 0.75)
-
+            
 			local damage_type_name = string.upper(KILLER_POPUP.data.damage_type_name)
 			self:AdvancedText(damage_type_name, "PureSkinBar", wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 			return
 		end
-
+        
+        -- killer role
+        util.DrawFilteredTexturedRect(x + edge_padding + 0.5 * (box_size - 40) , y + edge_padding + box_size + inner_padding, 40, 40, KILLER_POPUP.data.killer_role_icon)
+        
         -- killer weapon info
         local wx = x + edge_padding + box_size + inner_padding
         local wy = y + edge_padding + box_size + inner_padding

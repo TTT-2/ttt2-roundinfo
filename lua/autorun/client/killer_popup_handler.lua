@@ -73,6 +73,14 @@ if CLIENT then
         self.data.render = true
         self.data.mode = 'killer_world'
 
+        self.data.killer_name = 'world'
+        self.data.killer_icon = Material('vgui/ttt/avatar_killer_world')
+        self.data.killer_role_color = Color(222,222,222,150)
+
+        -- hp of world is TTT2 release date
+        self.data.killer_health = 20180509
+        self.data.killer_health_max = 20180509
+
         -- set timer
         timer.Create('display_popup', display_time, 1, function() self:HidePopup() end)
     end

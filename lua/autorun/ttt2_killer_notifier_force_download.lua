@@ -3,4 +3,5 @@
 
 if SERVER then
 	resource.AddFile("materials/vgui/ttt/huds/icon_headshot.vmt")
+	resource.AddFile("materials/vgui/ttt/avatar_killer_world.vmt")
 end
