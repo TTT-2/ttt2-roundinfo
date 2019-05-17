@@ -1,4 +1,4 @@
-local base = "pure_skin_element"
+local base = 'pure_skin_element'
 
 DEFINE_BASECLASS(base)
 
@@ -11,7 +11,7 @@ if CLIENT then -- CLIENT
         minsize = {w = 350, h = 213}
     }
 
-    HUDELEMENT.icon_headshot = Material("vgui/ttt/huds/icon_headshot")
+    HUDELEMENT.icon_headshot = Material('vgui/ttt/huds/icon_headshot')
     
     function HUDELEMENT:Initialize()
 		self.scale = 1.0
@@ -27,7 +27,7 @@ if CLIENT then -- CLIENT
 	end
     
     function HUDELEMENT:GetDefaults()
-		const_defaults["basepos"] = {x = math.Round(ScrW() * 0.5 - self.size.w * 0.5), y = ScrH() - (110 * self.scale + self.size.h)}
+		const_defaults['basepos'] = {x = math.Round(ScrW() * 0.5 - self.size.w * 0.5), y = ScrH() - (110 * self.scale + self.size.h)}
 
 		return const_defaults
 	end
@@ -68,8 +68,8 @@ if CLIENT then -- CLIENT
         local ix = x + edge_padding + box_size + inner_padding
         local iy = y + inner_padding - 4
 
-        local ywkb = string.upper("You were killed by")
-        self:AdvancedText(ywkb, "PureSkinBar", ix, iy, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+        local ywkb = string.upper(LANG.GetTranslation('ttt_rs_you_were_killed'))
+        self:AdvancedText(ywkb, 'PureSkinBar', ix, iy, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 
         surface.SetDrawColor(0, 0, 0, 90)
         surface.DrawRect(x, y + edge_padding, w, box_size)
@@ -92,14 +92,14 @@ if CLIENT then -- CLIENT
         local ny = y + edge_padding + inner_padding - 4
         
 		local killer_name = string.upper(KILLER_INFO.data.killer_name)
-		self:AdvancedText(killer_name, "PureSkinBar", nx, ny, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+		self:AdvancedText(killer_name, 'PureSkinBar', nx, ny, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
         
         -- killer hp
 		local bh = 26 --  bar height
 		local bx = nx
 		local by = y + edge_padding + box_size - bh - inner_padding
 		local bw = w - (bx - x) - inner_padding  -- bar width
-		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_max_health, self.scale, "HEALTH: " .. KILLER_INFO.data.killer_health)
+		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_max_health, self.scale, 'HEALTH: ' .. KILLER_INFO.data.killer_health)
         
 		if KILLER_INFO.data.mode == 'killer_self' or KILLER_INFO.data.mode == 'killer_no_weapon' or KILLER_INFO.data.mode == 'killer_world' then
 			local wx = x + edge_padding + box_size + inner_padding
@@ -109,7 +109,7 @@ if CLIENT then -- CLIENT
 			self:DrawLines(wx, wy, 32, 32, self.basecolor.a * 0.75)
             
 			local damage_type_name = string.upper(KILLER_INFO.data.damage_type_name)
-			self:AdvancedText(damage_type_name, "PureSkinBar", wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+			self:AdvancedText(damage_type_name, 'PureSkinBar', wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 			return
 		end
         
@@ -127,7 +127,7 @@ if CLIENT then -- CLIENT
         -- killer weapon name
         local weapon_name = string.upper(KILLER_INFO.data.killer_weapon_name)
         local weapon_name_width = surface.GetTextSize(killer_name) * self.scale
-        self:AdvancedText(weapon_name, "PureSkinBar", wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+        self:AdvancedText(weapon_name, 'PureSkinBar', wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 
         -- killer weapon headshot
         if KILLER_INFO.data.killer_weapon_head then
@@ -141,7 +141,7 @@ if CLIENT then -- CLIENT
 		local aw = w - (wx - x) - inner_padding  -- bar width
 
         if KILLER_INFO.data.killer_weapon_clip >= 0 then
-            local text = string.format("%i + %02i", KILLER_INFO.data.killer_weapon_clip, KILLER_INFO.data.killer_weapon_ammo)
+            local text = string.format('%i + %02i', KILLER_INFO.data.killer_weapon_clip, KILLER_INFO.data.killer_weapon_ammo)
             self:DrawBar(ax, ay, aw, ah, Color(238, 151, 0), KILLER_INFO.data.killer_weapon_clip / (KILLER_INFO.data.killer_weapon_clip_max), self.scale, text)
         end
 	end
