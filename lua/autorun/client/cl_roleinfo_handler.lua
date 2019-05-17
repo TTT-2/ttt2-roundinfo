@@ -75,7 +75,7 @@ if CLIENT then
         self.data.render = true
         self.data.mode = 'killer_world'
 
-        self.data.killer_name = 'world'
+        self.data.killer_name = LANG.GetTranslation('ttt_rs_killer_world')
         self.data.killer_icon = Material('vgui/ttt/avatar_killer_world')
         self.data.killer_role_color = Color(222,222,222,150)
 
@@ -94,7 +94,7 @@ if CLIENT then
         self.data.mode = 'killer_self'
 
         -- set killer role to local player
-        self.data.killer_name = 'yourself'
+        self.data.killer_name = LANG.GetTranslation('ttt_rs_killer_yourself')
         self.data.killer_sid64 = tostring(LocalPlayer():SteamID64())
         self.data.killer_icon = draw.GetAvatarMaterial(self.data.killer_sid64, 'medium', Material('vgui/ttt/icon_corpse'))
         self.data.killer_role = GetRoleByIndex(LocalPlayer():GetSubRole()).abbr

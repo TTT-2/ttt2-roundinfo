@@ -15,6 +15,8 @@ if CLIENT then
         LANG.AddToLanguage('English', 'ttt_rs_killtype_drowned', 'drowned')
         
         LANG.AddToLanguage('English', 'ttt_rs_you_were_killed', 'you were killed by')
+        LANG.AddToLanguage('English', 'ttt_rs_killer_yourself', 'yourself')
+        LANG.AddToLanguage('English', 'ttt_rs_killer_world', 'world')
 
 		-- GERMAN
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_preText', '0%Es gibt %1%{traits} Verräter%0%, %2%{innos} Unschuldige%0% und %3%{specs} Zuschauer%0% diese Runde.')
@@ -31,5 +33,7 @@ if CLIENT then
         LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_drowned', 'ertrunken')
         
         LANG.AddToLanguage('Deutsch', 'ttt_rs_you_were_killed', 'du wurdest getötet von')
+        LANG.AddToLanguage('Deutsch', 'ttt_rs_killer_yourself', 'du selbst')
+        LANG.AddToLanguage('Deutsch', 'ttt_rs_killer_world', 'Welt')
 	end)
 end
