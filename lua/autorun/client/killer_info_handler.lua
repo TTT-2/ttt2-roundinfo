@@ -3,23 +3,24 @@ if CLIENT then
 
     KILLER_INFO.data = {
         render = false,
-        mode = 'killer_none',
+        mode = 'killer_self',
         killer_name = 'KILLER_NAME',
         killer_sid64 = '',
-        killer_icon = nil,
-        killer_role = 'KILLER_ROLE',
-        killer_role_color = Color(0,0,0,255),
-        killer_role_icon = nil,
+        killer_icon = Material('vgui/ttt/avatar_killer_world'),
+        killer_role = 'inno',
+        killer_role_lang = '',
+        killer_role_color = Color(120,255,80),
+        killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_inno'),
         killer_health = 0,
-        killer_max_health = 0,
+        killer_max_health = 100,
         killer_weapon_name = 'WEAPON_NAME',
         killer_weapon_clip = 0,
         killer_weapon_clip_max = 0,
         killer_weapon_ammo = 0,
         killer_weapon_icon = nil,
-        killer_weapon_head = true,
-        damage_type_name = '',
-        damage_type_icon = nil
+        killer_weapon_head = false,
+        damage_type_name = 'TYPE',
+        damage_type_icon = Material('vgui/ttt/icon_skull')
     }
 
     function KILLER_INFO:RegisterKiller(name, sid64, role, role_lang, role_color, health, health_max)
@@ -35,7 +36,7 @@ if CLIENT then
     end
 
     function KILLER_INFO:RegisterWeapon(name, clip, clip_max, ammo, icon_path, headshot)
-        self.data.killer_weapon_name = name
+        self.data.killer_weapon_name = LANG.TryTranslation(name)
         self.data.killer_weapon_clip = clip
         self.data.killer_weapon_clip_max = clip_max
         self.data.killer_weapon_ammo = ammo
@@ -43,9 +44,9 @@ if CLIENT then
         self.data.killer_weapon_head = headshot
     end
 
-    function KILLER_INFO:RegisterDamageType(damage_type_icon_path, damage_type_name)
+    function KILLER_INFO:RegisterDamageType(damage_type_icon_path, damage_type_name_lang)
         self.data.damage_type_icon = Material(damage_type_icon_path)
-        self.data.damage_type_name = damage_type_name
+        self.data.damage_type_name = LANG.GetTranslation(damage_type_name_lang)
     end
 
     function KILLER_INFO:DisplayPopupKillerWeapon(display_time)
@@ -108,7 +109,6 @@ if CLIENT then
 
     function KILLER_INFO:HidePopup()
         self.data.render = false
-        self.data.mode = 'killer_none'
 
         if timer.Exists('display_popup') then
             timer.Remove('display_popup')
@@ -126,40 +126,28 @@ if CLIENT then
     function KILLER_INFO:PrintKillerWeapon()
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
-        local T = LANG.GetTranslation
-		local PT = LANG.GetParamTranslation
-
-        local txt = PT('ttt_rs_killText', {killer = self.data.killer_name, role = T(self.data.killer_role_lang)})
+        local txt = LANG.GetParamTranslation('ttt_rs_killText', {killer = self.data.killer_name, role = T(self.data.killer_role_lang), killtype = self.data.killer_weapon_name})
         self:PrintColor(txt)
     end
 
     function KILLER_INFO:PrintKillerNoWeapon()
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
-        local T = LANG.GetTranslation
-		local PT = LANG.GetParamTranslation
-
-        local txt = PT('ttt_rs_killText', {killer = self.data.killer_name, role = T(self.data.killer_role_lang)})
+        local txt = LANG.GetParamTranslation('ttt_rs_killText', {killer = self.data.killer_name, role = T(self.data.killer_role_lang), killtype = self.data.damage_type_name})
         self:PrintColor(txt)
     end
 
     function KILLER_INFO:PrintWorld()
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
-        local T = LANG.GetTranslation
-		local PT = LANG.GetParamTranslation
-
-        local txt = T('ttt_rs_worldKillText')
+        local txt = LANG.GetTranslation('ttt_rs_worldKillText')
         self:PrintColor(txt)
     end
 
     function KILLER_INFO:PrintSelf()
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
-        local T = LANG.GetTranslation
-		local PT = LANG.GetParamTranslation
-
-        local txt = T('ttt_rs_suicideText')
+        local txt = LANG.GetParamTranslation('ttt_rs_suicideText', {killtype = self.data.damage_type_name})
         self:PrintColor(txt)
     end
 

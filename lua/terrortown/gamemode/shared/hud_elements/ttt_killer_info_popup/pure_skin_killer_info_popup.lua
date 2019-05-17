@@ -38,7 +38,7 @@ if CLIENT then -- CLIENT
     end
 
     function HUDELEMENT:ShouldDraw()
-		return KILLER_INFO.data.render
+		return KILLER_INFO.data.render or HUDEditor.IsEditing
 	end
     -- parameter overwrites end
 
@@ -99,7 +99,7 @@ if CLIENT then -- CLIENT
 		local bx = nx
 		local by = y + edge_padding + box_size - bh - inner_padding
 		local bw = w - (bx - x) - inner_padding  -- bar width
-		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_health_max, self.scale, "HEALTH: " .. KILLER_INFO.data.killer_health)
+		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_max_health, self.scale, "HEALTH: " .. KILLER_INFO.data.killer_health)
         
 		if KILLER_INFO.data.mode == 'killer_self' or KILLER_INFO.data.mode == 'killer_no_weapon' or KILLER_INFO.data.mode == 'killer_world' then
 			local wx = x + edge_padding + box_size + inner_padding
@@ -125,7 +125,7 @@ if CLIENT then -- CLIENT
         self:DrawLines(wx, wy, 32, 32, self.basecolor.a * 0.75)
 
         -- killer weapon name
-        local weapon_name = string.upper(LANG.TryTranslation(KILLER_INFO.data.killer_weapon_name))
+        local weapon_name = string.upper(KILLER_INFO.data.killer_weapon_name)
         local weapon_name_width = surface.GetTextSize(killer_name) * self.scale
         self:AdvancedText(weapon_name, "PureSkinBar", wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 

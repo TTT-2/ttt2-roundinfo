@@ -53,8 +53,8 @@ else
 		-- ENGLISH
 		LANG.AddToLanguage('English', 'ttt_rs_preText', '0%There are %1%{traits} traitors%0%, %2%{innos} innocents%0% and %3%{specs} spectators%0% this round.')
 		LANG.AddToLanguage('English', 'ttt_rs_postText', 'The role distribution this round:')
-		LANG.AddToLanguage('English', 'ttt_rs_killText', '0%You were killed by %1%{killer}%0%. Role: %2%{role}%0%.')
-		LANG.AddToLanguage('English', 'ttt_rs_suicideText', '0%You were killed by someone called yourself...')
+		LANG.AddToLanguage('English', 'ttt_rs_killText', '0%You were killed by %1%{killer}%0%. Role: %2%{role}%0%. (type: {killtype})')
+		LANG.AddToLanguage('English', 'ttt_rs_suicideText', '0%You were killed by someone called yourself... (type: killtype})')
 		LANG.AddToLanguage('English', 'ttt_rs_worldKillText', '0%You were killed by the world.')
 
 		LANG.AddToLanguage('English', 'ttt_rs_killtype_unknown', 'unknown')
@@ -67,8 +67,8 @@ else
 		-- GERMAN
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_preText', '0%Es gibt %1%{traits} Verräter%0%, %2%{innos} Unschuldige%0% und %3%{specs} Zuschauer%0% diese Runde.')
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_postText', 'Die Rollenverteilung diese Runde:')
-		LANG.AddToLanguage('Deutsch', 'ttt_rs_killText', '0%Du wurdest von %1%{killer}%0% getötet. Rolle: %2%{role}%0%.')
-		LANG.AddToLanguage('Deutsch', 'ttt_rs_suicideText', '0%Du hast dich selbst getötet!')
+		LANG.AddToLanguage('Deutsch', 'ttt_rs_killText', '0%Du wurdest von %1%{killer}%0% getötet. Rolle: %2%{role}%0%. (type: {killtype}')
+		LANG.AddToLanguage('Deutsch', 'ttt_rs_suicideText', '0%Du hast dich selbst getötet! (type: {killtype}')
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_worldKillText', '0%Du wurdest von der Welt getötet.')
 
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_unknown', 'unbekannt')
@@ -79,6 +79,7 @@ else
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_drowned', 'ertrunken')
 	end)
 
+if CLIENT then
 	net.Receive('tttRsTellPre', function(len)
 		local PT = LANG.GetParamTranslation
 		local tblSize = net.ReadUInt(ROLE_BITS)
@@ -117,28 +118,28 @@ else
 		-- damage type: https://wiki.garrysmod.com/page/Enums/DMG
 		local damage_type = net.ReadUInt(32)
 		local damage_type_icon_path = 'vgui/ttt/icon_skull' -- TODO get description from confirm panel
-		local damage_type_name = 'unknown'
+		local damage_type_name_lang = 'ttt_rs_killtype_unknown'
 		if bit.band(damage_type, DMG_CRUSH) == DMG_CRUSH then
 			damage_type_icon_path = 'vgui/ttt/icon_rock'
-			damage_type_name = 'propkill'
+			damage_type_name_lang = 'ttt_rs_killtype_propkill'
 		end
 		if bit.band(damage_type, DMG_FALL) == DMG_FALL then
 			damage_type_icon_path = 'vgui/ttt/icon_fall'
-			damage_type_name = 'falldamage'
+			damage_type_name_lang = 'ttt_rs_killtype_falldamage'
 		end
 		if bit.band(damage_type, DMG_BURN) == DMG_BURN then
 			damage_type_icon_path = 'vgui/ttt/icon_fire'
-			damage_type_name = 'firedamage'
+			damage_type_name_lang = 'ttt_rs_killtype_firedamage'
 		end
 		if bit.band(damage_type, DMG_BLAST) == DMG_BLAST then
 			damage_type_icon_path = 'vgui/ttt/icon_splode'
-			damage_type_name = 'explosion'
+			damage_type_name_lang = 'ttt_rs_killtype_explosion'
 		end
 		if bit.band(damage_type, DMG_DROWN) == DMG_DROWN then
 			damage_type_icon_path = 'vgui/ttt/icon_drown'
-			damage_type_name = 'drowned'
+			damage_type_name_lang = 'ttt_rs_killtype_drowned'
 		end
-		KILLER_INFO:RegisterDamageType(damage_type_icon_path, damage_type_name)
+		KILLER_INFO:RegisterDamageType(damage_type_icon_path, damage_type_name_lang)
 		
 		-- check killer type before displaying UI element
 		local killer_type = net.ReadUInt(2)
