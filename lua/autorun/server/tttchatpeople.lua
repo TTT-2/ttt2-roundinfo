@@ -1,3 +1,4 @@
+-- ROUND SETUP INFORMATION
 function TellRoles()
 	local rolesnames = {}
 	local rls = {}
@@ -68,49 +69,20 @@ function TellRoles()
 end
 hook.Add("TTTBeginRound", "TTTChatStats", TellRoles)
 
-function TellKiller(victim, weapon, killer)
-	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool()
-		or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
-		or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
-	then return end
-
-	net.Start("tttRsDeathNotify")
-
-	if IsValid(killer) and killer:IsPlayer() then
-		if killer ~= victim then
-			net.WriteUInt(1, 4)
-
-			if TTT2 then
-				net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
-			else
-				net.WriteUInt(killer:GetRole(), 2)
-			end
-
-			net.WriteEntity(killer)
-		else
-			net.WriteUInt(2, 4)
-		end
-	else
-		net.WriteUInt(3, 4)
-	end
-
-	net.Send(victim)
-end
-hook.Add("PlayerDeath", "TTTChatStats", TellKiller)
-
-------------------------
-
-function TellKillerEnhanced(victim, attacker, dmg)
+-- KILLER INFORMATION
+function TellKiller(victim, attacker, dmg)
 	local killer = dmg:GetAttacker()
 
-	if not GetConVar("ttt_rolesetup_killer_popup"):GetBool()
+	if not GetConVar("ttt_rolesetup_tell_killer"):GetBool() and not GetConVar("ttt_rolesetup_killer_popup"):GetBool()
 		or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
 		or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
 	then return end
 
 	-- start network transmission
-	net.Start("tttRsDeathNotifyEnhanced")
+	net.Start("tttRsDeathNotify")
 	net.WriteUInt(GetConVar("ttt_rolesetup_killer_popup_time"):GetInt(), 16)
+	net.WriteBool(GetConVar("ttt_rolesetup_tell_killer"):GetBool())
+	net.WriteBool(GetConVar("ttt_rolesetup_killer_popup"):GetBool())
 	
 	-- send damage type
 	local damage_type = dmg:GetDamageType()
@@ -175,10 +147,9 @@ function TellKillerEnhanced(victim, attacker, dmg)
 
 	net.Send(victim)
 end
-hook.Add("DoPlayerDeath", "TTTChatStatsEnhanced", TellKillerEnhanced)
+hook.Add("DoPlayerDeath", "TTTChatStats", TellKiller)
 
----------------------------------
-
+-- ROUNDEND INFOTMATION
 function TellRolesNames()
 	if not GetConVar("ttt_rolesetup_tell_after_roles"):GetBool() or not rolesnamestext then return end
 

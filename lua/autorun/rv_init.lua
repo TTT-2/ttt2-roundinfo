@@ -50,24 +50,34 @@ else
 	end)
 
 	hook.Add('Initialize', 'TTTInitRS', function()
+		-- ENGLISH
 		LANG.AddToLanguage('English', 'ttt_rs_preText', '0%There are %1%{traits} traitors%0%, %2%{innos} innocents%0% and %3%{specs} spectators%0% this round.')
 		LANG.AddToLanguage('English', 'ttt_rs_postText', 'The role distribution this round:')
 		LANG.AddToLanguage('English', 'ttt_rs_killText', '0%You were killed by %1%{killer}%0%. Role: %2%{role}%0%.')
 		LANG.AddToLanguage('English', 'ttt_rs_suicideText', '0%You were killed by someone called yourself...')
 		LANG.AddToLanguage('English', 'ttt_rs_worldKillText', '0%You were killed by the world.')
 
+		LANG.AddToLanguage('English', 'ttt_rs_killtype_unknown', 'unknown')
+		LANG.AddToLanguage('English', 'ttt_rs_killtype_propkill', 'propkill')
+		LANG.AddToLanguage('English', 'ttt_rs_killtype_falldamage', 'falldamage')
+		LANG.AddToLanguage('English', 'ttt_rs_killtype_firedamage', 'firedamage')
+		LANG.AddToLanguage('English', 'ttt_rs_killtype_explosion', 'explosion')
+		LANG.AddToLanguage('English', 'ttt_rs_killtype_drowned', 'drowned')
+
+		-- GERMAN
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_preText', '0%Es gibt %1%{traits} Verräter%0%, %2%{innos} Unschuldige%0% und %3%{specs} Zuschauer%0% diese Runde.')
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_postText', 'Die Rollenverteilung diese Runde:')
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_killText', '0%Du wurdest von %1%{killer}%0% getötet. Rolle: %2%{role}%0%.')
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_suicideText', '0%Du hast dich selbst getötet!')
 		LANG.AddToLanguage('Deutsch', 'ttt_rs_worldKillText', '0%Du wurdest von der Welt getötet.')
-	end)
 
-	local defcolor = Color(255, 255, 255, 255)
-	local namecolor = Color(255, 255, 0, 255)
-	local traitcolor = Color(180, 50, 40, 255)
-	local innocolor = Color(55, 170, 50, 255)
-	local detecolor = Color(50, 60, 180, 255)
+		LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_unknown', 'unbekannt')
+		LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_propkill', 'Propkill')
+		LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_falldamage', 'Fallschaden')
+		LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_firedamage', 'Feuerschaden')
+		LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_explosion', 'Explosion')
+		LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_drowned', 'ertrunken')
+	end)
 
 	net.Receive('tttRsTellPre', function(len)
 		local PT = LANG.GetParamTranslation
@@ -84,13 +94,13 @@ else
 
 		for k, v in ipairs(arr) do
 			if v == '0' then
-				arr[k] = defcolor
+				arr[k] = Color(255, 255, 255, 255)
 			elseif v == '1' then
-				arr[k] = TTT2 and TRAITOR.color or not TTT2 and traitcolor
+				arr[k] = GetRoleByIndex(1).color --traitor
 			elseif v == '2' then
-				arr[k] = TTT2 and INNOCENT.color or not TTT2 and innocolor
+				arr[k] = GetRoleByIndex(0).color --innocent
 			elseif v == '3' then
-				arr[k] = team.GetColor(TEAM_SPEC)
+				arr[k] = team.GetColor(TEAM_SPEC) --spectator
 			end
 		end
 
@@ -98,65 +108,11 @@ else
 	end)
 
 	net.Receive('tttRsDeathNotify', function(len)
-		local T = LANG.GetTranslation
-		local PT = LANG.GetParamTranslation
-
-		local rolecolor = defcolor
-		local txt = ''
-
-		local killerType = net.ReadUInt(4)
-
-		if killerType == 1 then
-			local role = net.ReadUInt(ROLE_BITS)
-			local killer = net.ReadEntity()
-
-			if not IsValid(killer) or not killer:IsPlayer() then return end
-
-			local rolename = 'unknown'
-
-			if not TTT2 then
-				if role == ROLE_INNOCENT then
-					rolename = T('innocent')
-					rolecolor = TTT2 and INNOCENT.color or not TTT2 and innocolor
-				elseif role == ROLE_TRAITOR then
-					rolename = T('traitor')
-					rolecolor = TTT2 and TRAITOR.color or not TTT2 and traitcolor
-				elseif role == ROLE_DETECTIVE then
-					rolename = T('detective')
-					rolecolor = TTT2 and DETECTIVE.color or not TTT2 and detecolor
-				end
-			else
-				rolename = T(GetRoleByIndex(role).name)
-				rolecolor = GetRoleByIndex(role).color
-			end
-
-			txt = PT('ttt_rs_killText', {killer = killer:Nick(), role = rolename})
-		elseif killerType == 2 then
-			txt = T('ttt_rs_suicideText')
-		elseif killerType == 3 then
-			txt = T('ttt_rs_worldKillText')
-		end
-
-		local arr = string.Explode('%', txt)
-
-		for k, v in ipairs(arr) do
-			if v == '0' then
-				arr[k] = defcolor
-			elseif v == '1' then
-				arr[k] = namecolor
-			elseif v == '2' then
-				arr[k] = rolecolor
-			end
-		end
-
-		chat.AddText(unpack(arr))
-	end)
-
-	------------------
-
-	net.Receive('tttRsDeathNotifyEnhanced', function(len)
 		-- how long should the panel be displayed
 		local display_time = net.ReadUInt(16)
+
+		local killer_text = net.ReadBool()
+		local killer_popup = net.ReadBool()
 		
 		-- damage type: https://wiki.garrysmod.com/page/Enums/DMG
 		local damage_type = net.ReadUInt(32)
@@ -182,17 +138,19 @@ else
 			damage_type_icon_path = 'vgui/ttt/icon_drown'
 			damage_type_name = 'drowned'
 		end
-		KILLER_POPUP:RegisterDamageType(damage_type_icon_path, damage_type_name)
+		KILLER_INFO:RegisterDamageType(damage_type_icon_path, damage_type_name)
 		
 		-- check killer type before displaying UI element
 		local killer_type = net.ReadUInt(2)
 		if killer_type == 3 then
-			KILLER_POPUP:DisplayPopupWorld(display_time)
+			if killer_popup then KILLER_INFO:DisplayPopupWorld(display_time) end
+			if killer_text then KILLER_INFO:PrintWorld() end
 			return
 		end
 
 		if killer_type == 2 then
-			KILLER_POPUP:DisplayPopupSelf(display_time)
+			if killer_popup then KILLER_INFO:DisplayPopupSelf(display_time) end
+			if killer_text then KILLER_INFO:PrintSelf() end
 			return
 		end
 
@@ -202,16 +160,18 @@ else
 		local killer_nick = killer_ent:Nick()
 		local killer_sid64 = killer_ent:SteamID64()
 		local killer_role = GetRoleByIndex(killer_role_id).abbr
+		local killer_role_lang = GetRoleByIndex(killer_role_id).name
 		local killer_role_color = GetRoleByIndex(killer_role_id).color
 
 		local killer_health = killer_ent:Health()
 		local killer_health_max = killer_ent:GetMaxHealth()
 		
-		KILLER_POPUP:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_color, killer_health, killer_health_max)
+		KILLER_INFO:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_lang, killer_role_color, killer_health, killer_health_max)
 
 		local wep_class = net.ReadEntity()
 		if not IsValid(wep_class) then
-			KILLER_POPUP:DisplayPopupKillerNoWeapon(display_time)
+			if killer_popup then KILLER_INFO:DisplayPopupKillerNoWeapon(display_time) end
+			if killer_text then KILLER_INFO:PrintKillerNoWeapon() end
 			return
 		end
 
@@ -227,11 +187,10 @@ else
 			wep_name = wep_class:GetPrintName() or wep_class.PrintName or wep_class:GetClass() or '...'
 		end
 
-		KILLER_POPUP:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_class.Icon or 'vgui/ttt/icon_nades', was_headshot)
-		KILLER_POPUP:DisplayPopupKillerWeapon(display_time)
+		KILLER_INFO:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_class.Icon or 'vgui/ttt/icon_nades', was_headshot)
+		if killer_popup then KILLER_INFO:DisplayPopupKillerWeapon(display_time) end
+		if killer_text then KILLER_INFO:PrintKillerWeapon() end
 	end)
-
-	-------------------
 
 	net.Receive('tttRsTellPost', function(len)
 		local T = LANG.GetTranslation
@@ -264,13 +223,13 @@ else
 				if not TTT2 then
 					if k == ROLE_INNOCENT then
 						txt = ('2%' .. T('innocent') .. '%0%: ' .. v)
-						rolecolor = innocolor
+						rolecolor = GetRoleByIndex(0).color
 					elseif k == ROLE_TRAITOR then
 						txt = ('2%' .. T('traitor') .. '%0%: ' .. v)
-						rolecolor = traitcolor
+						rolecolor = GetRoleByIndex(1).color
 					elseif k == ROLE_DETECTIVE then
 						txt = ('2%' .. T('detective') .. '%0%: ' .. v)
-						rolecolor = detecolor
+						rolecolor = GetRoleByIndex(2).color
 					end
 				else
 					local rd = GetRoleByIndex(k)

@@ -1,7 +1,7 @@
 if CLIENT then
-    KILLER_POPUP = {}
+    KILLER_INFO = {}
 
-    KILLER_POPUP.data = {
+    KILLER_INFO.data = {
         render = false,
         mode = 'killer_none',
         killer_name = 'KILLER_NAME',
@@ -22,18 +22,19 @@ if CLIENT then
         damage_type_icon = nil
     }
 
-    function KILLER_POPUP:RegisterKiller(name, sid64, role, role_color, health, health_max)
+    function KILLER_INFO:RegisterKiller(name, sid64, role, role_lang, role_color, health, health_max)
         self.data.killer_name = name
         self.data.killer_sid64 = tostring(sid64)
         self.data.killer_icon = draw.GetAvatarMaterial(self.data.killer_sid64, 'medium', Material('vgui/ttt/icon_corpse'))
         self.data.killer_role = role
+        self.data.killer_role_lang = role_lang
         self.data.killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_' .. role)
         self.data.killer_role_color = role_color
         self.data.killer_health = health
         self.data.killer_health_max = health_max
     end
 
-    function KILLER_POPUP:RegisterWeapon(name, clip, clip_max, ammo, icon_path, headshot)
+    function KILLER_INFO:RegisterWeapon(name, clip, clip_max, ammo, icon_path, headshot)
         self.data.killer_weapon_name = name
         self.data.killer_weapon_clip = clip
         self.data.killer_weapon_clip_max = clip_max
@@ -42,12 +43,12 @@ if CLIENT then
         self.data.killer_weapon_head = headshot
     end
 
-    function KILLER_POPUP:RegisterDamageType(damage_type_icon_path, damage_type_name)
+    function KILLER_INFO:RegisterDamageType(damage_type_icon_path, damage_type_name)
         self.data.damage_type_icon = Material(damage_type_icon_path)
         self.data.damage_type_name = damage_type_name
     end
 
-    function KILLER_POPUP:DisplayPopupKillerWeapon(display_time)
+    function KILLER_INFO:DisplayPopupKillerWeapon(display_time)
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
         
         self.data.render = true
@@ -57,7 +58,7 @@ if CLIENT then
         timer.Create('display_popup', display_time, 1, function() self:HidePopup() end)
     end
 
-    function KILLER_POPUP:DisplayPopupKillerNoWeapon(display_time)
+    function KILLER_INFO:DisplayPopupKillerNoWeapon(display_time)
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
         
         self.data.render = true
@@ -67,7 +68,7 @@ if CLIENT then
         timer.Create('display_popup', display_time, 1, function() self:HidePopup() end)
     end
 
-    function KILLER_POPUP:DisplayPopupWorld(display_time)
+    function KILLER_INFO:DisplayPopupWorld(display_time)
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
         
         self.data.render = true
@@ -85,7 +86,7 @@ if CLIENT then
         timer.Create('display_popup', display_time, 1, function() self:HidePopup() end)
     end
 
-    function KILLER_POPUP:DisplayPopupSelf(display_time)
+    function KILLER_INFO:DisplayPopupSelf(display_time)
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
         self.data.render = true
@@ -105,10 +106,7 @@ if CLIENT then
         timer.Create('display_popup', display_time, 1, function() self:HidePopup() end)
     end
 
-
-
-
-    function KILLER_POPUP:HidePopup()
+    function KILLER_INFO:HidePopup()
         self.data.render = false
         self.data.mode = 'killer_none'
 
@@ -117,7 +115,68 @@ if CLIENT then
         end
     end
 
-    hook.Add('TTTPrepareRound', 'hide_popup_round_prepare', function() KILLER_POPUP:HidePopup() end)
-    hook.Add('TTTBeginRound', 'hide_popup_round_begin', function() KILLER_POPUP:HidePopup() end)
-    hook.Add('PlayerSpawn', 'hide_popup_player_spawn', function() KILLER_POPUP:HidePopup() end)
+    hook.Add('TTTPrepareRound', 'hide_popup_round_prepare', function() KILLER_INFO:HidePopup() end)
+    hook.Add('TTTBeginRound', 'hide_popup_round_begin', function() KILLER_INFO:HidePopup() end)
+    hook.Add('PlayerSpawn', 'hide_popup_player_spawn', function() KILLER_INFO:HidePopup() end)
+
+
+
+
+
+    function KILLER_INFO:PrintKillerWeapon()
+        if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
+
+        local T = LANG.GetTranslation
+		local PT = LANG.GetParamTranslation
+
+        local txt = PT('ttt_rs_killText', {killer = self.data.killer_name, role = T(self.data.killer_role_lang)})
+        self:PrintColor(txt)
+    end
+
+    function KILLER_INFO:PrintKillerNoWeapon()
+        if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
+
+        local T = LANG.GetTranslation
+		local PT = LANG.GetParamTranslation
+
+        local txt = PT('ttt_rs_killText', {killer = self.data.killer_name, role = T(self.data.killer_role_lang)})
+        self:PrintColor(txt)
+    end
+
+    function KILLER_INFO:PrintWorld()
+        if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
+
+        local T = LANG.GetTranslation
+		local PT = LANG.GetParamTranslation
+
+        local txt = T('ttt_rs_worldKillText')
+        self:PrintColor(txt)
+    end
+
+    function KILLER_INFO:PrintSelf()
+        if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
+
+        local T = LANG.GetTranslation
+		local PT = LANG.GetParamTranslation
+
+        local txt = T('ttt_rs_suicideText')
+        self:PrintColor(txt)
+    end
+
+    function KILLER_INFO:PrintColor(txt)
+        local arr = string.Explode('%', txt)
+
+		for k, v in ipairs(arr) do
+			if v == '0' then
+				arr[k] = Color(255, 255, 255, 255)
+			elseif v == '1' then
+				arr[k] = Color(255, 255, 0, 255)
+			elseif v == '2' then
+				arr[k] = self.data.killer_role_color
+			end
+		end
+
+		chat.AddText(unpack(arr))
+    end
+
 end
