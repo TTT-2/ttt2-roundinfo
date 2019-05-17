@@ -12,8 +12,8 @@ This addon is based on [this addon](https://steamcommunity.com/sharedfiles/filed
 # enables the role distribution texmessage on roundend (detailed list of each role)
   ttt_roundinfo_post_announce_distribution [0/1] (default: 1)
 
-# show a killer info popup
+# enables the killer info popup
   ttt_roundinfo_popup_killer [0/1] (default: 1)
-# display time of the killer popup
+# sets display time of the killer popup
   ttt_roundinfo_popup_killer [1..100] (default: 10)
 ```
