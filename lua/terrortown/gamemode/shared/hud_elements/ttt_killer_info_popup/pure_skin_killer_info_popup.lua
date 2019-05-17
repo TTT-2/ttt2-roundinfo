@@ -126,12 +126,12 @@ if CLIENT then -- CLIENT
 
         -- killer weapon name
         local weapon_name = string.upper(KILLER_INFO.data.killer_weapon_name)
-        local weapon_name_width = surface.GetTextSize(killer_name) * self.scale
+        local weapon_name_width = surface.GetTextSize(weapon_name) * self.scale
         self:AdvancedText(weapon_name, 'PureSkinBar', wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 
         -- killer weapon headshot
         if KILLER_INFO.data.killer_weapon_head then
-            util.DrawFilteredTexturedRect(wx + 42 + weapon_name_width + 28, wy + 3, 24, 24, self.icon_headshot, 180, {r=240, g=80, b=45})
+            util.DrawFilteredTexturedRect(wx + 42 + weapon_name_width + 8, wy + 3, 24, 24, self.icon_headshot, 180, {r=240, g=80, b=45})
         end
 
         -- killer ammo
