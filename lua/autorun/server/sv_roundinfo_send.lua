@@ -61,7 +61,7 @@ if SERVER then
 			end
 		end
 
-		if not GetConVar("ttt_roleinfo_pre_announce_distribution"):GetBool() then return end
+		if not GetConVar("ttt_roundinfo_pre_announce_distribution"):GetBool() then return end
 
 		net.Start("tttRsTellPre")
 		net.WriteUInt(table.Count(rls), ROLE_BITS)
@@ -80,16 +80,16 @@ if SERVER then
 	function TellKiller(victim, attacker, dmg)
 		local killer = dmg:GetAttacker()
 
-		if not GetConVar("ttt_roleinfo_announce_killer"):GetBool() and not GetConVar("ttt_roleinfo_popup_killer"):GetBool()
+		if not GetConVar("ttt_roundinfo_announce_killer"):GetBool() and not GetConVar("ttt_roundinfo_popup_killer"):GetBool()
 			or IsValid(killer) and killer:IsPlayer() and killer.IsGhost and killer:IsGhost()
 			or IsValid(victim) and victim:IsPlayer() and victim.IsGhost and victim:IsGhost() and not victim.NOWINASC
 		then return end
 
 		-- start network transmission
 		net.Start("tttRsDeathNotify")
-		net.WriteUInt(GetConVar("ttt_roleinfo_popup_killer_time"):GetInt(), 16)
-		net.WriteBool(GetConVar("ttt_roleinfo_announce_killer"):GetBool())
-		net.WriteBool(GetConVar("ttt_roleinfo_popup_killer"):GetBool())
+		net.WriteUInt(GetConVar("ttt_roundinfo_popup_killer_time"):GetInt(), 16)
+		net.WriteBool(GetConVar("ttt_roundinfo_announce_killer"):GetBool())
+		net.WriteBool(GetConVar("ttt_roundinfo_popup_killer"):GetBool())
 		
 		-- send damage type
 		local damage_type = dmg:GetDamageType()
@@ -158,7 +158,7 @@ if SERVER then
 
 	-- ROUNDEND INFOTMATION
 	function TellRolesNames()
-		if not GetConVar("ttt_roleinfo_post_announce_distribution"):GetBool() or not rolesnamestext then return end
+		if not GetConVar("ttt_roundinfo_post_announce_distribution"):GetBool() or not rolesnamestext then return end
 
 		for _, v in ipairs(player.GetAll()) do
 			net.Start("tttRsTellPost")
