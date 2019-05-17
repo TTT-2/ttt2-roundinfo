@@ -101,7 +101,12 @@ if CLIENT then -- CLIENT
 		local bw = w - (bx - x) - inner_padding  -- bar width
 		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_max_health, self.scale, 'HEALTH: ' .. KILLER_INFO.data.killer_health)
         
-		if KILLER_INFO.data.mode == 'killer_self' or KILLER_INFO.data.mode == 'killer_no_weapon' or KILLER_INFO.data.mode == 'killer_world' then
+        -- killer role
+        if KILLER_INFO.data.mode ~= 'killer_world' then
+            util.DrawFilteredTexturedRect(x + edge_padding + 0.5 * (box_size - 40) , y + edge_padding + box_size + inner_padding, 40, 40, KILLER_INFO.data.killer_role_icon)
+        end
+        
+        if KILLER_INFO.data.mode == 'killer_self' or KILLER_INFO.data.mode == 'killer_no_weapon' or KILLER_INFO.data.mode == 'killer_world' then
 			local wx = x + edge_padding + box_size + inner_padding
 			local wy = y + edge_padding + box_size + inner_padding
             
@@ -113,8 +118,6 @@ if CLIENT then -- CLIENT
 			return
 		end
         
-        -- killer role
-        util.DrawFilteredTexturedRect(x + edge_padding + 0.5 * (box_size - 40) , y + edge_padding + box_size + inner_padding, 40, 40, KILLER_INFO.data.killer_role_icon)
         
         -- killer weapon info
         local wx = x + edge_padding + box_size + inner_padding
