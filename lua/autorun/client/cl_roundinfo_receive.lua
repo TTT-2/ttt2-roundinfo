@@ -113,6 +113,9 @@ if CLIENT then
 	end)
 
 	net.Receive('tttRsTellPost', function(len)
+		local defcolor = Color(255, 255, 255, 255)
+		local namecolor = Color(255, 235, 135, 255)
+
 		local T = LANG.GetTranslation
 		local rolesnames = {}
 		local rolecolor = defcolor
@@ -140,24 +143,10 @@ if CLIENT then
 					end
 				end
 
-				if not TTT2 then
-					if k == ROLE_INNOCENT then
-						txt = ('2%' .. T('innocent') .. '%0%: ' .. v)
-						rolecolor = GetRoleByIndex(0).color
-					elseif k == ROLE_TRAITOR then
-						txt = ('2%' .. T('traitor') .. '%0%: ' .. v)
-						rolecolor = GetRoleByIndex(1).color
-					elseif k == ROLE_DETECTIVE then
-						txt = ('2%' .. T('detective') .. '%0%: ' .. v)
-						rolecolor = GetRoleByIndex(2).color
-					end
-				else
-					local rd = GetRoleByIndex(k)
-
-					rolecolor = rd.color
-
-					txt = ('2%' .. T(rd.name) .. '%0%: ' .. v)
-				end
+				local rd = GetRoleByIndex(k)
+				txt = ('2%' .. T(rd.name) .. '%0%: ' .. v)
+				
+				rolecolor = rd.color
 			end
 
 			local arr = string.Explode('%', txt)
