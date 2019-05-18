@@ -33,7 +33,7 @@ if CLIENT then
         LANG.AddToLanguage('Deutsch', 'ttt_rs_killtype_drowned', 'ertrunken')
         
         LANG.AddToLanguage('Deutsch', 'ttt_rs_you_were_killed', 'du wurdest getötet von')
-        LANG.AddToLanguage('Deutsch', 'ttt_rs_killer_yourself', 'du selbst')
+        LANG.AddToLanguage('Deutsch', 'ttt_rs_killer_yourself', 'dir selbst')
         LANG.AddToLanguage('Deutsch', 'ttt_rs_killer_world', 'Welt')
 	end)
 end
