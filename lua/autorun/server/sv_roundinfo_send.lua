@@ -141,9 +141,14 @@ if SERVER then
 			wep_ammo = -1
 		else -- default case
 			was_headshot = victim.was_headshot and dmg:IsBulletDamage()
-			wep_clip = wep_class:Clip1() -1
-			wep_clip_max = wep_class:GetMaxClip1()
-			wep_ammo = wep_class:Ammo1()
+			wep_clip = math.floor(wep_class:Clip1() -1)
+			wep_clip_max = math.floor(wep_class:GetMaxClip1())
+			wep_ammo = math.floor(wep_class:Ammo1())
+
+			-- check if values are numbers (e.g. snowball has a boolean for ammo)
+			if type(wep_clip) ~= 'number' then wep_clip = -1 end
+			if type(wep_clip_max) ~= 'number' then wep_clip_max = -1 end
+			if type(wep_ammo) ~= 'number' then wep_ammo = -1 end
 		end
 			
 		net.WriteEntity(wep_class)
