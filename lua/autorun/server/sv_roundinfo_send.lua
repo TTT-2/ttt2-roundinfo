@@ -141,7 +141,7 @@ if SERVER then
 			wep_ammo = -1
 		else -- default case
 			was_headshot = victim.was_headshot and dmg:IsBulletDamage()
-			wep_clip = wep_class:Clip1() -1
+			wep_clip = wep_class:Clip1()
 			wep_clip_max = wep_class:GetMaxClip1()
 			wep_ammo = wep_class:Ammo1()
 
@@ -151,7 +151,7 @@ if SERVER then
 			if type(wep_ammo) ~= 'number' then wep_ammo = -1 end
 
 			-- make sure all values are integers
-			wep_clip = math.floor(wep_clip)
+			wep_clip = math.floor(wep_clip -1)
 			wep_clip_max = math.floor(wep_clip_max)
 			wep_ammo = math.floor(wep_ammo)
 		end
