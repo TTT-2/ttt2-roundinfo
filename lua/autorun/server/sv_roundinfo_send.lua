@@ -95,16 +95,15 @@ if SERVER then
 		local damage_type = dmg:GetDamageType()
 		net.WriteUInt(damage_type, 32)
 
-		-- special case: drowning and falldamage should be "killed by yourself"
-		if dmg:IsDamageType(DMG_DROWN) or dmg:IsDamageType(DMG_FALL) then
-			net.WriteUInt(2, 2)
-
-			net.Send(victim)
-			return
-		end
-
 		-- killed by world
 		if not IsValid(killer) or not killer:IsPlayer() then
+			-- special case: drowning and falldamage should be "killed by yourself"
+			if dmg:IsDamageType(DMG_DROWN) or dmg:IsDamageType(DMG_FALL) then
+				net.WriteUInt(2, 2)
+
+				net.Send(victim)
+				return
+			end
 			net.WriteUInt(3, 2)
 			net.Send(victim)
 			return
