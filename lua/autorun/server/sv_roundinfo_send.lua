@@ -95,16 +95,15 @@ if SERVER then
 		local damage_type = dmg:GetDamageType()
 		net.WriteUInt(damage_type, 32)
 
-		-- special case: drowning and falldamage should be "killed by yourself"
-		if dmg:IsDamageType(DMG_DROWN) or dmg:IsDamageType(DMG_FALL) then
-			net.WriteUInt(2, 2)
-
-			net.Send(victim)
-			return
-		end
-
 		-- killed by world
 		if not IsValid(killer) or not killer:IsPlayer() then
+			-- special case: drowning and falldamage should be "killed by yourself"
+			if dmg:IsDamageType(DMG_DROWN) or dmg:IsDamageType(DMG_FALL) then
+				net.WriteUInt(2, 2)
+
+				net.Send(victim)
+				return
+			end
 			net.WriteUInt(3, 2)
 			net.Send(victim)
 			return
@@ -124,6 +123,13 @@ if SERVER then
 		net.WriteEntity(killer)
 		net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
 
+		-- killer role color has to be read on server since the sidekick gets a dynamic color
+		local killer_role_color = killer:GetRoleColor()
+		net.WriteUInt(killer_role_color.r, 8)
+		net.WriteUInt(killer_role_color.g, 8)
+		net.WriteUInt(killer_role_color.b, 8)
+		net.WriteUInt(killer_role_color.a, 8)
+		
 		--local wep_class = attacker:GetActiveWeapon()
 		local wep_class = util.WeaponFromDamage(dmg)
 

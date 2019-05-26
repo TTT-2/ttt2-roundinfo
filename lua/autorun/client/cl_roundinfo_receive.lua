@@ -81,8 +81,8 @@ if CLIENT then
 		local killer_sid64 = killer_ent:SteamID64()
 		local killer_role = GetRoleByIndex(killer_role_id).abbr
 		local killer_role_lang = GetRoleByIndex(killer_role_id).name
-		local killer_role_color = GetRoleByIndex(killer_role_id).color
-
+		local killer_role_color = Color(net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8))
+		
 		local killer_health = killer_ent:Health()
 		local killer_health_max = killer_ent:GetMaxHealth()
 		
