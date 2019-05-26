@@ -123,6 +123,13 @@ if SERVER then
 		net.WriteEntity(killer)
 		net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
 
+		-- killer role color has to be read on server since the sidekick gets a dynamic color
+		local killer_role_color = killer:GetRoleColor()
+		net.WriteUInt(killer_role_color.r, 8)
+		net.WriteUInt(killer_role_color.g, 8)
+		net.WriteUInt(killer_role_color.b, 8)
+		net.WriteUInt(killer_role_color.a, 8)
+		
 		--local wep_class = attacker:GetActiveWeapon()
 		local wep_class = util.WeaponFromDamage(dmg)
 
