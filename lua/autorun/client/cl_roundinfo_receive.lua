@@ -83,8 +83,8 @@ if CLIENT then
 		local killer_role_lang = GetRoleByIndex(killer_role_id).name
 		local killer_role_color = Color(net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8))
 		
-		local killer_health = killer_ent:Health()
-		local killer_health_max = killer_ent:GetMaxHealth()
+		local killer_health = math.max(0, killer_ent:Health())
+		local killer_health_max = math.max(0, killer_ent:GetMaxHealth())
 		
 		KILLER_INFO:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_lang, killer_role_color, killer_health, killer_health_max)
 
