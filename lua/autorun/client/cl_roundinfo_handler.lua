@@ -87,11 +87,31 @@ if CLIENT then
         timer.Create('display_popup', display_time, 1, function() self:HidePopup() end)
     end
 
-    function KILLER_INFO:DisplayPopupSelf(display_time)
+    function KILLER_INFO:DisplayPopupSelfNoWeapon(display_time)
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
         self.data.render = true
-        self.data.mode = 'killer_self'
+        self.data.mode = 'killer_self_no_weapon'
+
+        -- set killer role to local player
+        self.data.killer_name = LANG.GetTranslation('ttt_rs_killer_yourself')
+        self.data.killer_sid64 = tostring(LocalPlayer():SteamID64())
+        self.data.killer_icon = draw.GetAvatarMaterial(self.data.killer_sid64, 'medium', Material('vgui/ttt/icon_corpse'))
+        self.data.killer_role = GetRoleByIndex(LocalPlayer():GetSubRole()).abbr
+        self.data.killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_' .. self.data.killer_role)
+        self.data.killer_role_color = GetRoleByIndex(LocalPlayer():GetSubRole()).color
+        self.data.killer_health = 0
+        self.data.killer_health_max = 100
+
+        -- set timer
+        timer.Create('display_popup', display_time, 1, function() self:HidePopup() end)
+    end
+
+    function KILLER_INFO:DisplayPopupSelfWeapon(display_time)
+        if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
+
+        self.data.render = true
+        self.data.mode = 'killer_self_weapon'
 
         -- set killer role to local player
         self.data.killer_name = LANG.GetTranslation('ttt_rs_killer_yourself')

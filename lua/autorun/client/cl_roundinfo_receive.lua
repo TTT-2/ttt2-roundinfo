@@ -68,30 +68,33 @@ if CLIENT then
 			return
 		end
 
-		if killer_type == 2 then
-			if killer_popup then KILLER_INFO:DisplayPopupSelf(display_time) end
-			if killer_text then KILLER_INFO:PrintSelf() end
-			return
+		-- killer data is only sent when killed by other player
+		if killer_type == 1 then
+			local killer_ent = net.ReadEntity()
+			local killer_role_id = net.ReadUInt(ROLE_BITS)
+
+			local killer_nick = killer_ent:Nick()
+			local killer_sid64 = killer_ent:SteamID64()
+			local killer_role = GetRoleByIndex(killer_role_id).abbr
+			local killer_role_lang = GetRoleByIndex(killer_role_id).name
+			local killer_role_color = Color(net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8))
+			
+			local killer_health = math.max(0, killer_ent:Health())
+			local killer_health_max = math.max(0, killer_ent:GetMaxHealth())
+			
+			KILLER_INFO:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_lang, killer_role_color, killer_health, killer_health_max)
 		end
 
-		local killer_ent = net.ReadEntity()
-		local killer_role_id = net.ReadUInt(ROLE_BITS)
-
-		local killer_nick = killer_ent:Nick()
-		local killer_sid64 = killer_ent:SteamID64()
-		local killer_role = GetRoleByIndex(killer_role_id).abbr
-		local killer_role_lang = GetRoleByIndex(killer_role_id).name
-		local killer_role_color = Color(net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8), net.ReadUInt(8))
-		
-		local killer_health = math.max(0, killer_ent:Health())
-		local killer_health_max = math.max(0, killer_ent:GetMaxHealth())
-		
-		KILLER_INFO:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_lang, killer_role_color, killer_health, killer_health_max)
-
 		local wep_class = net.ReadEntity()
-		if not IsValid(wep_class) then
-			if killer_popup then KILLER_INFO:DisplayPopupKillerNoWeapon(display_time) end
-			if killer_text then KILLER_INFO:PrintKillerNoWeapon() end
+		if not IsValid(wep_class) or not wep_class then
+			if killer_type == 1 then
+				if killer_popup then KILLER_INFO:DisplayPopupKillerNoWeapon(display_time) end
+				if killer_text then KILLER_INFO:PrintKillerNoWeapon() end
+			end
+			if killer_type == 2 then
+				if killer_popup then KILLER_INFO:DisplayPopupSelfNoWeapon(display_time) end
+				if killer_text then KILLER_INFO:PrintSelf() end
+			end
 			return
 		end
 
@@ -108,8 +111,15 @@ if CLIENT then
 		end
 
 		KILLER_INFO:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_class.Icon or 'vgui/ttt/icon_nades', was_headshot)
-		if killer_popup then KILLER_INFO:DisplayPopupKillerWeapon(display_time) end
-		if killer_text then KILLER_INFO:PrintKillerWeapon() end
+
+		if killer_type == 1 then
+			if killer_popup then KILLER_INFO:DisplayPopupKillerWeapon(display_time) end
+			if killer_text then KILLER_INFO:PrintKillerWeapon() end
+		end
+		if killer_type == 2 then
+			if killer_popup then KILLER_INFO:DisplayPopupSelfWeapon(display_time) end
+			if killer_text then KILLER_INFO:PrintSelf() end
+		end
 	end)
 
 	net.Receive('tttRsTellPost', function(len)

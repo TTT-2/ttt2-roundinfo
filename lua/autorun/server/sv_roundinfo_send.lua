@@ -112,31 +112,30 @@ if SERVER then
 		-- killed by yourself
 		if killer == victim then
 			net.WriteUInt(2, 2)
-			
-			net.Send(victim)
-			return
+		else -- killed by killer
+			net.WriteUInt(1, 2)
+
+			net.WriteEntity(killer)
+			net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
+
+			-- killer role color has to be read on server since the sidekick gets a dynamic color
+			local killer_role_color = killer:GetRoleColor()
+			net.WriteUInt(killer_role_color.r, 8)
+			net.WriteUInt(killer_role_color.g, 8)
+			net.WriteUInt(killer_role_color.b, 8)
+			net.WriteUInt(killer_role_color.a, 8)
 		end
-
-		-- killed by killer
-		net.WriteUInt(1, 2)
-
-		net.WriteEntity(killer)
-		net.WriteUInt(killer:GetSubRole(), ROLE_BITS)
-
-		-- killer role color has to be read on server since the sidekick gets a dynamic color
-		local killer_role_color = killer:GetRoleColor()
-		net.WriteUInt(killer_role_color.r, 8)
-		net.WriteUInt(killer_role_color.g, 8)
-		net.WriteUInt(killer_role_color.b, 8)
-		net.WriteUInt(killer_role_color.a, 8)
 		
 		--local wep_class = attacker:GetActiveWeapon()
 		local wep_class = util.WeaponFromDamage(dmg)
 
 		if not IsValid(wep_class) or not wep_class then
+			print("DEBUG ====================================================================== no VALID weapon")
 			net.Send(victim)
 			return
 		end
+
+		print("DEBUG ====================================================================== VALID weapon; " .. tostring(wep_class))
 		
 		local was_headshot, wep_clip, wep_clip_max, wep_ammo
 		

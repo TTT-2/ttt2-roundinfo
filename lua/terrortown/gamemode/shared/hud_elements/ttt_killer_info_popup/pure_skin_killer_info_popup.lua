@@ -106,7 +106,7 @@ if CLIENT then -- CLIENT
             util.DrawFilteredTexturedRect(x + edge_padding + 0.5 * (box_size - 40) , y + edge_padding + box_size + inner_padding, 40, 40, KILLER_INFO.data.killer_role_icon)
         end
         
-        if KILLER_INFO.data.mode == 'killer_self' or KILLER_INFO.data.mode == 'killer_no_weapon' or KILLER_INFO.data.mode == 'killer_world' then
+        if KILLER_INFO.data.mode == 'killer_self_no_weapon' or KILLER_INFO.data.mode == 'killer_no_weapon' or KILLER_INFO.data.mode == 'killer_world' then
 			local wx = x + edge_padding + box_size + inner_padding
 			local wy = y + edge_padding + box_size + inner_padding
             
@@ -138,7 +138,7 @@ if CLIENT then -- CLIENT
         end
 
         -- killer ammo
-        local ah = 26 --  bar height
+        local ah = 26 -- bar height
         local ax = wx
         local ay = y + h - inner_padding - ah
 		local aw = w - (wx - x) - inner_padding  -- bar width
