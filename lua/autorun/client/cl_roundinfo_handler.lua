@@ -17,7 +17,7 @@ if CLIENT then
         killer_weapon_clip = 0,
         killer_weapon_clip_max = 0,
         killer_weapon_ammo = 0,
-        killer_weapon_icon = nil,
+        killer_weapon_icon = Material('vgui/ttt/icon_nades'),
         killer_weapon_head = false,
         damage_type_name = 'TYPE',
         damage_type_icon = Material('vgui/ttt/icon_skull')
