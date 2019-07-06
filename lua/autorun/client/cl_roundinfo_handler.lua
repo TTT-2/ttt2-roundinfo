@@ -99,7 +99,7 @@ if CLIENT then
         self.data.killer_icon = draw.GetAvatarMaterial(self.data.killer_sid64, 'medium', Material('vgui/ttt/icon_corpse'))
         self.data.killer_role = GetRoleByIndex(LocalPlayer():GetSubRole()).abbr
         self.data.killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_' .. self.data.killer_role)
-        self.data.killer_role_color = GetRoleByIndex(LocalPlayer():GetSubRole()).color
+        self.data.killer_role_color = LocalPlayer():GetRoleColor()
         self.data.killer_health = 0
         self.data.killer_health_max = 100
 
@@ -119,7 +119,7 @@ if CLIENT then
         self.data.killer_icon = draw.GetAvatarMaterial(self.data.killer_sid64, 'medium', Material('vgui/ttt/icon_corpse'))
         self.data.killer_role = GetRoleByIndex(LocalPlayer():GetSubRole()).abbr
         self.data.killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_' .. self.data.killer_role)
-        self.data.killer_role_color = GetRoleByIndex(LocalPlayer():GetSubRole()).color
+        self.data.killer_role_color = LocalPlayer():GetRoleColor()
         self.data.killer_health = 0
         self.data.killer_health_max = 100
 

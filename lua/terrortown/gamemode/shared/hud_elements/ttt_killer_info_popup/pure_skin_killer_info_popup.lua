@@ -69,7 +69,7 @@ if CLIENT then -- CLIENT
         local iy = y + inner_padding - 4
 
         local ywkb = string.upper(LANG.GetTranslation('ttt_rs_you_were_killed'))
-        self:AdvancedText(ywkb, 'PureSkinBar', ix, iy, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+        draw.AdvancedText(ywkb, 'PureSkinBar', ix, iy, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 
         surface.SetDrawColor(0, 0, 0, 90)
         surface.DrawRect(x, y + edge_padding, w, box_size)
@@ -92,7 +92,7 @@ if CLIENT then -- CLIENT
         local ny = y + edge_padding + inner_padding - 4
         
 		local killer_name = string.upper(KILLER_INFO.data.killer_name)
-		self:AdvancedText(killer_name, 'PureSkinBar', nx, ny, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+		draw.AdvancedText(killer_name, 'PureSkinBar', nx, ny, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
         
         -- killer hp
 		local bh = 26 --  bar height
@@ -114,7 +114,7 @@ if CLIENT then -- CLIENT
 			self:DrawLines(wx, wy, 32, 32, self.basecolor.a * 0.75)
             
 			local damage_type_name = string.upper(KILLER_INFO.data.damage_type_name)
-			self:AdvancedText(damage_type_name, 'PureSkinBar', wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+			draw.AdvancedText(damage_type_name, 'PureSkinBar', wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 			return
 		end
         
@@ -130,7 +130,7 @@ if CLIENT then -- CLIENT
         -- killer weapon name
         local weapon_name = string.upper(KILLER_INFO.data.killer_weapon_name)
         local weapon_name_width = surface.GetTextSize(weapon_name) * self.scale
-        self:AdvancedText(weapon_name, 'PureSkinBar', wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+        draw.AdvancedText(weapon_name, 'PureSkinBar', wx + 42, wy + 5, self:GetDefaultFontColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
 
         -- killer weapon headshot
         if KILLER_INFO.data.killer_weapon_head then

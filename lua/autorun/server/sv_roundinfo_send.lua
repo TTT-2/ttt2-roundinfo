@@ -130,13 +130,10 @@ if SERVER then
 		local wep_class = util.WeaponFromDamage(dmg)
 
 		if not IsValid(wep_class) or not wep_class then
-			print("DEBUG ====================================================================== no VALID weapon")
 			net.Send(victim)
 			return
 		end
 
-		print("DEBUG ====================================================================== VALID weapon; " .. tostring(wep_class))
-		
 		local was_headshot, wep_clip, wep_clip_max, wep_ammo
 		
 		if wep_class['Clip1'] == nil or wep_class['GetMaxClip1'] == nil or wep_class['Ammo1'] == nil then -- weapon without any clip like a thrown knife
