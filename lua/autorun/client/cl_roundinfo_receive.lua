@@ -85,8 +85,9 @@ if CLIENT then
 			KILLER_INFO:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_lang, killer_role_color, killer_health, killer_health_max)
 		end
 
-		local wep_class = net.ReadEntity()
-		if not IsValid(wep_class) or not wep_class then
+		local hasWeapon = net.ReadUInt(1) == 1
+
+		if !hasWeapon then
 			if killer_type == 1 then
 				if killer_popup then KILLER_INFO:DisplayPopupKillerNoWeapon(display_time) end
 				if killer_text then KILLER_INFO:PrintKillerNoWeapon() end
@@ -98,19 +99,16 @@ if CLIENT then
 			return
 		end
 
+		local wep_className = net.ReadString()
+		local wep_class = weapons.GetStored(wep_className) or {}
+		local wep_name = wep_class.PrintName or wep_className
+		local wep_icon = wep_class.Icon or 'vgui/ttt/icon_nades'
 		local wep_clip = net.ReadInt(16)
 		local wep_clip_max = net.ReadInt(16)
 		local wep_ammo = net.ReadInt(16)
 		local was_headshot = net.ReadBool()
 
-		local wep_name = ''
-		if wep_class['GetPrintName'] == nil then
-			wep_name = wep_class.PrintName or wep_class:GetClass() or '...'
-		else
-			wep_name = wep_class:GetPrintName() or wep_class.PrintName or wep_class:GetClass() or '...'
-		end
-
-		KILLER_INFO:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_class.Icon or 'vgui/ttt/icon_nades', was_headshot)
+		KILLER_INFO:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_icon, was_headshot)
 
 		if killer_type == 1 then
 			if killer_popup then KILLER_INFO:DisplayPopupKillerWeapon(display_time) end
