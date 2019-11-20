@@ -130,7 +130,7 @@ if SERVER then
 		local wep_class = util.WeaponFromDamage(dmg)
 
 		if not IsValid(wep_class) or not wep_class then
-			net.WriteUInt(0, 1) -- Has Weapon : FALSE
+			net.WriteBool(false)
 			net.Send(victim)
 			return
 		end
@@ -159,7 +159,7 @@ if SERVER then
 			wep_ammo = math.floor(wep_ammo)
 		end
 
-		net.WriteUInt(1, 1) -- Has Weapon : TRUE
+		net.WriteBool(true)
 		net.WriteString(wep_class:GetClass() or 'undefined')
 		net.WriteInt(wep_clip, 16)
 		net.WriteInt(wep_clip_max, 16)

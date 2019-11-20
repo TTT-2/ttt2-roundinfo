@@ -1,27 +1,32 @@
 if CLIENT then
     KILLER_INFO = {}
 
-    KILLER_INFO.data = {
-        render = false,
-        mode = 'killer_self',
-        killer_name = 'KILLER_NAME',
-        killer_sid64 = '',
-        killer_icon = Material('vgui/ttt/avatar_killer_world'),
-        killer_role = 'inno',
-        killer_role_lang = '',
-        killer_role_color = Color(120,255,80),
-        killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_inno'),
-        killer_health = 0,
-        killer_max_health = 100,
-        killer_weapon_name = 'WEAPON_NAME',
-        killer_weapon_clip = 0,
-        killer_weapon_clip_max = 0,
-        killer_weapon_ammo = 0,
-        killer_weapon_icon = Material('vgui/ttt/icon_nades'),
-        killer_weapon_head = false,
-        damage_type_name = 'TYPE',
-        damage_type_icon = Material('vgui/ttt/icon_skull')
-    }
+    function KILLER_INFO:Reset()
+        KILLER_INFO.data = {
+            render = false,
+            mode = 'killer_self',
+            killer_name = 'KILLER_NAME',
+            killer_sid64 = '',
+            killer_icon = Material('vgui/ttt/avatar_killer_world'),
+            killer_role = 'inno',
+            killer_role_lang = '',
+            killer_role_color = Color(120,255,80),
+            killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_inno'),
+            killer_health = 0,
+            killer_max_health = 100,
+            killer_weapon_name = 'WEAPON_NAME',
+            killer_weapon_clip = 0,
+            killer_weapon_clip_max = 0,
+            killer_weapon_ammo = 0,
+            killer_weapon_icon = Material('vgui/ttt/icon_nades'),
+            killer_weapon_head = false,
+            damage_type_name = 'TYPE',
+            damage_type_icon = Material('vgui/ttt/icon_skull')
+        }
+    end
+
+    -- Initialize KILLER_INFO with default values
+    KILLER_INFO:Reset()
 
     function KILLER_INFO:RegisterKiller(name, sid64, role, role_lang, role_color, health, health_max)
         self.data.killer_name = name
@@ -129,6 +134,7 @@ if CLIENT then
 
     function KILLER_INFO:HidePopup()
         self.data.render = false
+        KILLER_INFO:Reset()
 
         if timer.Exists('display_popup') then
             timer.Remove('display_popup')
@@ -166,7 +172,7 @@ if CLIENT then
     function KILLER_INFO:PrintSelf()
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
-        local txt = LANG.GetParamTranslation('ttt_rs_suicideText', {killtype = self.data.killer_weapon_name != 'WEAPON_NAME' and self.data.killer_weapon_name or self.data.damage_type_name})
+        local txt = LANG.GetParamTranslation('ttt_rs_suicideText', {killtype = not self.data.killer_weapon_name == 'WEAPON_NAME' and self.data.killer_weapon_name or self.data.damage_type_name})
         self:PrintColor(txt)
     end
 
