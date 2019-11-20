@@ -172,7 +172,7 @@ if CLIENT then
     function KILLER_INFO:PrintSelf()
         if (GAMEMODE.round_state ~= ROUND_ACTIVE and GAMEMODE.round_state ~= ROUND_POST) then return end
 
-        local txt = LANG.GetParamTranslation('ttt_rs_suicideText', {killtype = not self.data.killer_weapon_name == 'WEAPON_NAME' and self.data.killer_weapon_name or self.data.damage_type_name})
+        local txt = LANG.GetParamTranslation('ttt_rs_suicideText', {killtype = self.data.killer_weapon_name ~= 'WEAPON_NAME' and self.data.killer_weapon_name or self.data.damage_type_name})
         self:PrintColor(txt)
     end
 
