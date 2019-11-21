@@ -1,28 +1,34 @@
 if CLIENT then
     KILLER_INFO = {}
 
+    local KILLER_INFO_FALLBACK_DATA = {
+        render = false,
+        mode = 'killer_self',
+        killer_name = 'KILLER_NAME',
+        killer_sid64 = '',
+        killer_icon = Material('vgui/ttt/avatar_killer_world'),
+        killer_role = 'inno',
+        killer_role_lang = '',
+        killer_role_color = Color(120,255,80),
+        killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_inno'),
+        killer_health = 0,
+        killer_max_health = 100,
+        killer_weapon_name = 'WEAPON_NAME',
+        killer_weapon_clip = 0,
+        killer_weapon_clip_max = 0,
+        killer_weapon_ammo = 0,
+        killer_weapon_icon = Material('vgui/ttt/icon_nades'),
+        killer_weapon_head = false,
+        damage_type_name = 'TYPE',
+        damage_type_icon = Material('vgui/ttt/icon_skull')
+    }
+
+    KILLER_INFO_FALLBACK_DATA.__index = KILLER_INFO_FALLBACK_DATA
+
     function KILLER_INFO:Reset()
-        KILLER_INFO.data = {
-            render = false,
-            mode = 'killer_self',
-            killer_name = 'KILLER_NAME',
-            killer_sid64 = '',
-            killer_icon = Material('vgui/ttt/avatar_killer_world'),
-            killer_role = 'inno',
-            killer_role_lang = '',
-            killer_role_color = Color(120,255,80),
-            killer_role_icon = Material('vgui/ttt/dynamic/roles/icon_inno'),
-            killer_health = 0,
-            killer_max_health = 100,
-            killer_weapon_name = 'WEAPON_NAME',
-            killer_weapon_clip = 0,
-            killer_weapon_clip_max = 0,
-            killer_weapon_ammo = 0,
-            killer_weapon_icon = Material('vgui/ttt/icon_nades'),
-            killer_weapon_head = false,
-            damage_type_name = 'TYPE',
-            damage_type_icon = Material('vgui/ttt/icon_skull')
-        }
+        KILLER_INFO.data = {}
+
+        setmetatable(KILLER_INFO.data, KILLER_INFO_FALLBACK_DATA)
     end
 
     -- Initialize KILLER_INFO with default values
