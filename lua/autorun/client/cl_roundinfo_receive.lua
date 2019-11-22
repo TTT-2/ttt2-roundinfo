@@ -41,20 +41,16 @@ if CLIENT then
 		if bit.band(damage_type, DMG_CRUSH) == DMG_CRUSH then
 			damage_type_icon_path = 'vgui/ttt/icon_rock'
 			damage_type_name_lang = 'ttt_rs_killtype_propkill'
-		end
-		if bit.band(damage_type, DMG_FALL) == DMG_FALL then
+		elseif bit.band(damage_type, DMG_FALL) == DMG_FALL then
 			damage_type_icon_path = 'vgui/ttt/icon_fall'
 			damage_type_name_lang = 'ttt_rs_killtype_falldamage'
-		end
-		if bit.band(damage_type, DMG_BURN) == DMG_BURN then
+		elseif bit.band(damage_type, DMG_BURN) == DMG_BURN then
 			damage_type_icon_path = 'vgui/ttt/icon_fire'
 			damage_type_name_lang = 'ttt_rs_killtype_firedamage'
-		end
-		if bit.band(damage_type, DMG_BLAST) == DMG_BLAST then
+		elseif bit.band(damage_type, DMG_BLAST) == DMG_BLAST then
 			damage_type_icon_path = 'vgui/ttt/icon_splode'
 			damage_type_name_lang = 'ttt_rs_killtype_explosion'
-		end
-		if bit.band(damage_type, DMG_DROWN) == DMG_DROWN then
+		elseif bit.band(damage_type, DMG_DROWN) == DMG_DROWN then
 			damage_type_icon_path = 'vgui/ttt/icon_drown'
 			damage_type_name_lang = 'ttt_rs_killtype_drowned'
 		end
@@ -85,39 +81,36 @@ if CLIENT then
 			KILLER_INFO:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_lang, killer_role_color, killer_health, killer_health_max)
 		end
 
-		local wep_class = net.ReadEntity()
-		if not IsValid(wep_class) or not wep_class then
-			if killer_type == 1 then
-				if killer_popup then KILLER_INFO:DisplayPopupKillerNoWeapon(display_time) end
-				if killer_text then KILLER_INFO:PrintKillerNoWeapon() end
+		local hasWeapon = net.ReadBool()
+		if hasWeapon then
+			local wep_className = net.ReadString()
+			local wep_class = weapons.GetStored(wep_className)
+			if wep_class then
+				local wep_name = wep_class.PrintName or wep_className
+				local wep_icon = wep_class.Icon or 'vgui/ttt/icon_nades'
+				local wep_clip = net.ReadInt(16)
+				local wep_clip_max = net.ReadInt(16)
+				local wep_ammo = net.ReadInt(16)
+				local was_headshot = net.ReadBool()
+
+				KILLER_INFO:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_icon, was_headshot)
+
+				if killer_type == 1 then
+					if killer_popup then KILLER_INFO:DisplayPopupKillerWeapon(display_time) end
+					if killer_text then KILLER_INFO:PrintKillerWeapon() end
+				elseif killer_type == 2 then
+					if killer_popup then KILLER_INFO:DisplayPopupSelfWeapon(display_time) end
+					if killer_text then KILLER_INFO:PrintSelf() end
+				end
+				return
 			end
-			if killer_type == 2 then
-				if killer_popup then KILLER_INFO:DisplayPopupSelfNoWeapon(display_time) end
-				if killer_text then KILLER_INFO:PrintSelf() end
-			end
-			return
 		end
-
-		local wep_clip = net.ReadInt(16)
-		local wep_clip_max = net.ReadInt(16)
-		local wep_ammo = net.ReadInt(16)
-		local was_headshot = net.ReadBool()
-
-		local wep_name = ''
-		if wep_class['GetPrintName'] == nil then
-			wep_name = wep_class.PrintName or wep_class:GetClass() or '...'
-		else
-			wep_name = wep_class:GetPrintName() or wep_class.PrintName or wep_class:GetClass() or '...'
-		end
-
-		KILLER_INFO:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_class.Icon or 'vgui/ttt/icon_nades', was_headshot)
 
 		if killer_type == 1 then
-			if killer_popup then KILLER_INFO:DisplayPopupKillerWeapon(display_time) end
-			if killer_text then KILLER_INFO:PrintKillerWeapon() end
-		end
-		if killer_type == 2 then
-			if killer_popup then KILLER_INFO:DisplayPopupSelfWeapon(display_time) end
+			if killer_popup then KILLER_INFO:DisplayPopupKillerNoWeapon(display_time) end
+			if killer_text then KILLER_INFO:PrintKillerNoWeapon() end
+		elseif killer_type == 2 then
+			if killer_popup then KILLER_INFO:DisplayPopupSelfNoWeapon(display_time) end
 			if killer_text then KILLER_INFO:PrintSelf() end
 		end
 	end)
