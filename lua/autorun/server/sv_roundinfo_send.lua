@@ -1,21 +1,21 @@
 if SERVER then
-	util.AddNetworkString('tttRsTellPre')
-	util.AddNetworkString('tttRsTellPost')
-	util.AddNetworkString('tttRsDeathNotify')
-	util.AddNetworkString('tttRsDeathNotifyEnhanced')
-	util.AddNetworkString('tttRsPlayerRespawn')
-	
+	util.AddNetworkString("tttRsTellPre")
+	util.AddNetworkString("tttRsTellPost")
+	util.AddNetworkString("tttRsDeathNotify")
+	util.AddNetworkString("tttRsDeathNotifyEnhanced")
+	util.AddNetworkString("tttRsPlayerRespawn")
+
 	-- ROUND SETUP INFORMATION
 	function TellRoles()
 		local rolesnames = {}
 		local rls = {}
 		local printrls = {}
 		local spectators = 0
-		
+
 		if not TTT2 then
 			rls[ROLE_INNOCENT] = 0
 			rls[ROLE_TRAITOR] = 0
-			
+
 			rolesnames[ROLE_INNOCENT] = {}
 			rolesnames[ROLE_TRAITOR] = {}
 			rolesnames[ROLE_DETECTIVE] = {}
@@ -23,14 +23,13 @@ if SERVER then
 			for _, v in pairs(GetRoles()) do
 				rls[v.index] = 0
 				printrls[v.index] = false
-				
+
 				rolesnames[v.index] = {}
 			end
 		end
-		
+
 		printrls[ROLE_INNOCENT] = true
 		printrls[ROLE_TRAITOR] = true
-		
 
 		for _, v in ipairs(player.GetAll()) do
 			if not v:Alive() or not v:IsTerror() then
@@ -52,7 +51,7 @@ if SERVER then
 				rls[ROLE_INNOCENT] = rls[ROLE_INNOCENT] + (rls[role] or 0)
 			end
 		end
-		
+
 		rolesnamestext = {}
 
 		for role, nicks in pairs(rolesnames) do
@@ -90,7 +89,11 @@ if SERVER then
 		net.WriteUInt(GetConVar("ttt_roundinfo_popup_killer_time"):GetInt(), 16)
 		net.WriteBool(GetConVar("ttt_roundinfo_announce_killer"):GetBool())
 		net.WriteBool(GetConVar("ttt_roundinfo_popup_killer"):GetBool())
-		
+
+		-- send armor of killer
+		net.WriteUInt(killer:GetArmor(), 16)
+		net.WriteUInt(killer:GetMaxArmor(), 16)
+
 		-- send damage type
 		local damage_type = dmg:GetDamageType()
 		net.WriteUInt(damage_type, 32)
@@ -108,7 +111,7 @@ if SERVER then
 			net.Send(victim)
 			return
 		end
-		
+
 		-- killed by yourself
 		if killer == victim then
 			net.WriteUInt(2, 2)
@@ -125,7 +128,7 @@ if SERVER then
 			net.WriteUInt(killer_role_color.b, 8)
 			net.WriteUInt(killer_role_color.a, 8)
 		end
-		
+
 		--local wep_class = attacker:GetActiveWeapon()
 		local wep_class = util.WeaponFromDamage(dmg)
 
@@ -136,8 +139,8 @@ if SERVER then
 		end
 
 		local was_headshot, wep_clip, wep_clip_max, wep_ammo
-		
-		if wep_class['Clip1'] == nil or wep_class['GetMaxClip1'] == nil or wep_class['Ammo1'] == nil then -- weapon without any clip like a thrown knife
+
+		if wep_class["Clip1"] == nil or wep_class["GetMaxClip1"] == nil or wep_class["Ammo1"] == nil then -- weapon without any clip like a thrown knife
 			was_headshot = false
 			wep_clip = -1
 			wep_clip_max = -1
@@ -149,9 +152,9 @@ if SERVER then
 			wep_ammo = wep_class:Ammo1()
 
 			-- check if values are numbers (e.g. snowball has a boolean for ammo)
-			if type(wep_clip) ~= 'number' then wep_clip = -1 end
-			if type(wep_clip_max) ~= 'number' then wep_clip_max = -1 end
-			if type(wep_ammo) ~= 'number' then wep_ammo = -1 end
+			if type(wep_clip) ~= "number" then wep_clip = -1 end
+			if type(wep_clip_max) ~= "number" then wep_clip_max = -1 end
+			if type(wep_ammo) ~= "number" then wep_ammo = -1 end
 
 			-- make sure all values are integers
 			wep_clip = math.floor(wep_clip -1)
@@ -160,7 +163,7 @@ if SERVER then
 		end
 
 		net.WriteBool(true)
-		net.WriteString(wep_class:GetClass() or 'undefined')
+		net.WriteString(wep_class:GetClass() or "undefined")
 		net.WriteInt(wep_clip, 16)
 		net.WriteInt(wep_clip_max, 16)
 		net.WriteInt(wep_ammo, 16)
@@ -189,8 +192,8 @@ if SERVER then
 	hook.Add("TTTEndRound", "TTTChatStats", TellRolesNames)
 
 	-- SEND PLAYER SPAWN TO CLIENT TO CLOSE POPUP
-	hook.Add('PlayerSpawn', 'hide_popup_player_spawn', function(player)
+	hook.Add("PlayerSpawn", "hide_popup_player_spawn", function(ply)
 		net.Start("tttRsPlayerRespawn")
-		net.Send(player)
+		net.Send(ply)
 	end)
 end
