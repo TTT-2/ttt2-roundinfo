@@ -90,10 +90,6 @@ if SERVER then
 		net.WriteBool(GetConVar("ttt_roundinfo_announce_killer"):GetBool())
 		net.WriteBool(GetConVar("ttt_roundinfo_popup_killer"):GetBool())
 
-		-- send armor of killer
-		net.WriteUInt(killer:GetArmor(), 16)
-		net.WriteUInt(killer:GetMaxArmor(), 16)
-
 		-- send damage type
 		local damage_type = dmg:GetDamageType()
 		net.WriteUInt(damage_type, 32)
@@ -127,6 +123,10 @@ if SERVER then
 			net.WriteUInt(killer_role_color.g, 8)
 			net.WriteUInt(killer_role_color.b, 8)
 			net.WriteUInt(killer_role_color.a, 8)
+
+			-- send armor of killer
+			net.WriteUInt(killer:GetArmor(), 16)
+			net.WriteUInt(killer:GetMaxArmor(), 16)
 		end
 
 		--local wep_class = attacker:GetActiveWeapon()

@@ -34,9 +34,6 @@ if CLIENT then
 		local killer_text = net.ReadBool()
 		local killer_popup = net.ReadBool()
 
-		local killer_armor = net.ReadUInt(16)
-		local killer_armor_max = net.ReadUInt(16)
-
 		-- damage type: https://wiki.garrysmod.com/page/Enums/DMG
 		local damage_type = net.ReadUInt(32)
 		local damage_type_icon_path = "vgui/ttt/icon_skull" -- TODO get description from confirm panel
@@ -80,6 +77,9 @@ if CLIENT then
 
 			local killer_health = math.max(0, killer_ent:Health())
 			local killer_health_max = math.max(0, killer_ent:GetMaxHealth())
+
+			local killer_armor = net.ReadUInt(16)
+			local killer_armor_max = net.ReadUInt(16)
 
 			KILLER_INFO:RegisterKiller(killer_nick, killer_sid64, killer_role, killer_role_lang, killer_role_color, killer_health, killer_health_max, killer_armor, killer_armor_max)
 		end
