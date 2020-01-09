@@ -69,6 +69,9 @@ if CLIENT then
 			local killer_ent = net.ReadEntity()
 			local killer_role_id = net.ReadUInt(ROLE_BITS)
 
+			-- killer can be invalid if he has disconnected
+			if not IsValid(killer_ent) then return end
+
 			local killer_nick = killer_ent:Nick()
 			local killer_sid64 = killer_ent:SteamID64()
 			local killer_role = GetRoleByIndex(killer_role_id).abbr
