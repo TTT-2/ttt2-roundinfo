@@ -101,7 +101,7 @@ if CLIENT then -- CLIENT
 		local bx = nx
 		local by = y + edge_padding + box_size - bh - inner_padding
 		local bw = w - (bx - x) - inner_padding -- bar width
-		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_max_health, self.scale, tring.upper(LANG.GetTranslation("hud_health")) .. ": " .. KILLER_INFO.data.killer_health)
+		self:DrawBar(bx, by, bw, bh, Color(234, 41, 41), KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_max_health, self.scale, string.upper(LANG.GetTranslation("hud_health")) .. ": " .. KILLER_INFO.data.killer_health)
 
 		-- draw armor information
 		if not GetGlobalBool("ttt_armor_classic", false) and KILLER_INFO.data.killer_armor > 0 then
