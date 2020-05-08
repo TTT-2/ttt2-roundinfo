@@ -1,4 +1,4 @@
-if CLIENT then
+  if CLIENT then
 	hook.Add("Initialize", "TTTInitRS", function()
 		-- ENGLISH
 		LANG.AddToLanguage("English", "ttt_rs_preText", "0%There are %1%{traits} traitors%0%, %2%{innos} innocents%0% and %3%{specs} spectators%0% this round.")
@@ -35,5 +35,23 @@ if CLIENT then
 		LANG.AddToLanguage("Deutsch", "ttt_rs_you_were_killed", "du wurdest getötet von")
 		LANG.AddToLanguage("Deutsch", "ttt_rs_killer_yourself", "dir selbst")
 		LANG.AddToLanguage("Deutsch", "ttt_rs_killer_world", "Welt")
+
+        -- ITALIAN
+		LANG.AddToLanguage("Italiano", "ttt_rs_preText", "0%Ci sono %1%{traits} traditori, %2%{innos} innocenti e %3%{specs} spettatori questo round.")
+		LANG.AddToLanguage("Italiano", "ttt_rs_postText", "La distribuzione dei ruoli questo round:")
+		LANG.AddToLanguage("Italiano", "ttt_rs_killText", "0%Sei stato ucciso da %1%{killer}%0%. Ruolo: %2%{role}%0%. (morte: {killtype})")
+		LANG.AddToLanguage("Italiano", "ttt_rs_suicideText", "0%Ti sei suicidato... (morte: {killtype})")
+		LANG.AddToLanguage("Italiano", "ttt_rs_worldKillText", "0%Sei stato ucciso dal mondo.")
+
+		LANG.AddToLanguage("Italiano", "ttt_rs_killtype_unknown", "sconosciuto")
+		LANG.AddToLanguage("Italiano", "ttt_rs_killtype_propkill", "propkill")
+		LANG.AddToLanguage("Italiano", "ttt_rs_killtype_falldamage", "danno da caduta")
+		LANG.AddToLanguage("Italiano", "ttt_rs_killtype_firedamage", "danno da fuoco")
+		LANG.AddToLanguage("Italiano", "ttt_rs_killtype_explosion", "esplosione")
+		LANG.AddToLanguage("Italiano", "ttt_rs_killtype_drowned", "annegato")
+
+		LANG.AddToLanguage("Italiano", "ttt_rs_you_were_killed", "sei stato ucciso da")
+		LANG.AddToLanguage("Italiano", "ttt_rs_killer_yourself", "te stesso")
+		LANG.AddToLanguage("Italiano", "ttt_rs_killer_world", "mondo")
 	end)
 end
