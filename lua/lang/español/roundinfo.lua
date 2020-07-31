@@ -1,4 +1,4 @@
-L = LANG.GetLanguageTableReference("spanish")
+L = LANG.GetLanguageTableReference("Español")
 
 L["ttt_rs_preText"] = "0%Hay %1%{traits} traidores%0%, %2%{innos} inocentes%0% y %3%{specs} espectadores%0% en esta ronda."
 L["ttt_rs_postText"] = "La distribución de roles esta ronda:"
