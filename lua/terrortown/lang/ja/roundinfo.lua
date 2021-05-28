@@ -1,4 +1,4 @@
-local L = LANG.GetLanguageTableReference("日本語")
+local L = LANG.GetLanguageTableReference("ja")
 
 L["ttt_rs_preText"] = "0%このラウンドでは%1%Traitor%0%が{traits}人、%2%Innocent%0%が{innos}人、そして%3%Spectator%0%が{specs}人います。"
 L["ttt_rs_postText"] = "このラウンドの役職の内訳:"
