@@ -13,6 +13,18 @@ if CLIENT then -- CLIENT
 
 	HUDELEMENT.icon_headshot = Material("vgui/ttt/huds/icon_headshot")
 
+	function HUDELEMENT:PreInitialize()
+		BaseClass.PreInitialize(self)
+
+		local hud = huds.GetStored("pure_skin")
+		if hud then
+			hud:ForceElement(self.id)
+		end
+
+		-- set as fallback default, other skins have to be set to true!
+		self.disabledUnlessForced = false
+	end
+
 	function HUDELEMENT:Initialize()
 		self.scale = 1.0
 		self.basecolor = self:GetHUDBasecolor()
