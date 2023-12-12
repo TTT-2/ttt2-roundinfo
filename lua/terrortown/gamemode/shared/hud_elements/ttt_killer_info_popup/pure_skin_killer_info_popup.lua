@@ -18,6 +18,7 @@ if CLIENT then -- CLIENT
 
 	local mat_tid_ammo = Material("vgui/ttt/tid/tid_ammo")
 
+	local color_headshot = Color(240, 80, 45, 180)
 	local color_health = Color(234, 41, 41)
 	local color_ammoBar = Color(238, 151, 0)
 
@@ -186,7 +187,7 @@ if CLIENT then -- CLIENT
 
 		-- killer weapon headshot
 		if KILLER_INFO.data.killer_weapon_head then
-			draw.FilteredShadowedTexture(wx + 42 + weapon_name_width + 8, wy + 3, 24, 24, self.icon_headshot, 180, {r = 240, g = 80, b = 45})
+			draw.FilteredShadowedTexture(wx + 42 + weapon_name_width + 8, wy + 3, 24, 24, self.icon_headshot, color_headshot.a, color_headshot)
 		end
 
 		-- killer ammo

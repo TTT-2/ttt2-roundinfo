@@ -9,7 +9,7 @@ if CLIENT then
 		killer_icon = Material("vgui/ttt/avatar_killer_world"),
 		killer_role = "inno",
 		killer_role_lang = "",
-		killer_role_color = Color(120,255,80),
+		killer_role_color = Color(80,173,59),
 		killer_role_icon = Material("vgui/ttt/dynamic/roles/icon_inno"),
 		killer_health = 0,
 		killer_max_health = 100,
