@@ -156,14 +156,14 @@ if CLIENT then -- CLIENT
 
 		-- killer role
 		if KILLER_INFO.data.mode ~= "killer_world" then
-			draw.FilteredTexture(x + edge_padding + 0.5 * (box_size - 40) , y + edge_padding + box_size + inner_padding, 40, 40, KILLER_INFO.data.killer_role_icon)
+			draw.FilteredShadowedTexture(x + edge_padding + 0.5 * (box_size - 40) , y + edge_padding + box_size + inner_padding, 40, 40, KILLER_INFO.data.killer_role_icon)
 		end
 
 		if KILLER_INFO.data.mode == "killer_self_no_weapon" or KILLER_INFO.data.mode == "killer_no_weapon" or KILLER_INFO.data.mode == "killer_world" then
 			local wx = x + edge_padding + box_size + inner_padding
 			local wy = y + edge_padding + box_size + inner_padding
 
-			draw.FilteredTexture(wx, wy, 32, 32, KILLER_INFO.data.damage_type_icon)
+			draw.FilteredShadowedTexture(wx, wy, 32, 32, KILLER_INFO.data.damage_type_icon)
 			self:DrawLines(wx, wy, 32, 32, self.basecolor.a * 0.75)
 
 			local damage_type_name = string.upper(KILLER_INFO.data.damage_type_name)
@@ -186,7 +186,7 @@ if CLIENT then -- CLIENT
 
 		-- killer weapon headshot
 		if KILLER_INFO.data.killer_weapon_head then
-			draw.FilteredTexture(wx + 42 + weapon_name_width + 8, wy + 3, 24, 24, self.icon_headshot, 180, {r = 240, g = 80, b = 45})
+			draw.FilteredShadowedTexture(wx + 42 + weapon_name_width + 8, wy + 3, 24, 24, self.icon_headshot, 180, {r = 240, g = 80, b = 45})
 		end
 
 		-- killer ammo
