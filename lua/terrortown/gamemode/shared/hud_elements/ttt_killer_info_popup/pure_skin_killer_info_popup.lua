@@ -13,15 +13,15 @@ if CLIENT then -- CLIENT
 
 	HUDELEMENT.icon_headshot = Material("vgui/ttt/huds/icon_headshot")
 
-	local icon_health = Material("vgui/ttt/hud_health.vmt")
-	local icon_health_low = Material("vgui/ttt/hud_health_low.vmt")
+	local materialHealth = Material("vgui/ttt/hud_health.vmt")
+	local materialHealthLow = Material("vgui/ttt/hud_health_low.vmt")
 
 	local mat_tid_ammo = Material("vgui/ttt/tid/tid_ammo")
 
-	local color_headshot = Color(240, 80, 45, 180)
-	local color_health = Color(234, 41, 41)
-	local color_ammoBar = Color(238, 151, 0)
-	local color_shadow = Color(0, 0, 0, 90)
+	local colorHeadshot = Color(240, 80, 45, 180)
+	local colorHealth = Color(234, 41, 41)
+	local colorAmmo = Color(238, 151, 0)
+	local colorShadow = Color(0, 0, 0, 90)
 
 	function HUDELEMENT:PreInitialize()
 		BaseClass.PreInitialize(self)
@@ -65,8 +65,8 @@ if CLIENT then -- CLIENT
 	end
 	-- parameter overwrites end
 
-	local icon_armor = Material("vgui/ttt/hud_armor.vmt")
-	local icon_armor_rei = Material("vgui/ttt/hud_armor_reinforced.vmt")
+	local materialArmorDefault = Material("vgui/ttt/hud_armor.vmt")
+	local materialArmorReinforced = Material("vgui/ttt/hud_armor_reinforced.vmt")
 
 	function HUDELEMENT:Draw()
 		local pos = self:GetPos()
@@ -82,138 +82,224 @@ if CLIENT then -- CLIENT
 
 	-- added to a helper function to use return instead of nested ifs
 	function HUDELEMENT:DrawHelper(x, y, w, h)
-		-- params
-		local edge_padding = 39 * self.scale
-		local box_size = 78 * self.scale
-		local inner_padding = 14 * self.scale
+		local paddingEdge = 39 * self.scale
+		local paddingInner = 14 * self.scale
+		local paddingSmall = 5 * self.scale
 
-		local offsetColorBar2 = 32 * self.scale
-		local offsetColorBar3 = 124 * self.scale
-		local offsetKillerIcon = 46 * self.scale
-		local offsetX = 42 * self.scale
+		local sizeColorBar2 = 78 * self.scale
 
 		local sizeWeaponIcon = 32 * self.scale
 		local sizeKillerIcon = 64 * self.scale
 		local sizeHeadshotIcon = 24 * self.scale
 		local sizeRoleIcon = 40 * self.scale
 
+		local offsetColorBar2 = 32 * self.scale
+		local offsetColorBar3 = 124 * self.scale
+		local offsetKillerIcon = 46 * self.scale
+		local offsetX = 42 * self.scale
+		local offsetContentX = x + paddingEdge + sizeColorBar2 + paddingInner
+
+		local heightBar = 26 * self.scale
+		local widthBar = x + w - offsetContentX - paddingInner
+
+		local sizeBarIcon = heightBar - 11 * self.scale
+		local xBarIcon = offsetContentX + 0.5 * sizeBarIcon
+		local xBarText = xBarIcon + sizeBarIcon + paddingSmall
+
+		local yHealthBar = y + paddingEdge + sizeColorBar2 - heightBar - paddingInner
+		local yHealthBarContent = yHealthBar + paddingSmall
+
+		local yAmmoBar = y + h - paddingInner - heightBar
+		local yAmmoBarContent = yAmmoBar + paddingSmall
+
+		local colorTextBase = util.GetDefaultColor(self.basecolor)
+		local colorHealthContent = util.GetDefaultColor(colorHealth)
+		local colorAmmoContent = util.GetDefaultColor(colorAmmo)
+
 		-- draw bg
-		self:DrawBg(x, y, w, h, self.basecolor)
+		draw.Box(x, y, w, h, self.basecolor)
+		draw.AdvancedText(
+			string.upper(LANG.GetTranslation("ttt_rs_you_were_killed")),
+			"PureSkinBar",
+			x + paddingEdge + sizeColorBar2 + paddingInner,
+			y + paddingInner - 4 * self.scale,
+			colorTextBase,
+			TEXT_ALIGN_LEFT,
+			TEXT_ALIGN_TOP,
+			true,
+			self.scale
+		)
 
-		local ix = x + edge_padding + box_size + inner_padding
-		local iy = y + inner_padding - 4 * self.scale
-
-		local ywkb = string.upper(LANG.GetTranslation("ttt_rs_you_were_killed"))
-		draw.AdvancedText(ywkb, "PureSkinBar", ix, iy, util.GetDefaultColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
-
-		draw.Box(x, y + edge_padding, w, box_size, color_shadow)
-		draw.Box(x + edge_padding, y, box_size, offsetColorBar2, KILLER_INFO.data.killer_role_color)
-		draw.Box(x + edge_padding, y + edge_padding, box_size, box_size, KILLER_INFO.data.killer_role_color)
-		draw.Box(x + edge_padding, y + offsetColorBar3, box_size, h - offsetColorBar3, KILLER_INFO.data.killer_role_color)
+		draw.Box(x, y + paddingEdge, w, sizeColorBar2, colorShadow)
+		draw.Box(x + paddingEdge, y, sizeColorBar2, offsetColorBar2, KILLER_INFO.data.killer_role_color)
+		draw.Box(x + paddingEdge, y + paddingEdge, sizeColorBar2, sizeColorBar2, KILLER_INFO.data.killer_role_color)
+		draw.Box(x + paddingEdge, y + offsetColorBar3, sizeColorBar2, h - offsetColorBar3, KILLER_INFO.data.killer_role_color)
 
 		draw.FilteredTexture(x + offsetKillerIcon, y + offsetKillerIcon, sizeKillerIcon, sizeKillerIcon, KILLER_INFO.data.killer_icon)
 
-		self:DrawLines(x + edge_padding, y + edge_padding, box_size, box_size, self.basecolor.a)
+		self:DrawLines(x + paddingEdge, y + paddingEdge, sizeColorBar2, sizeColorBar2, self.basecolor.a)
 		self:DrawLines(x + offsetKillerIcon, y + offsetKillerIcon, sizeKillerIcon, sizeKillerIcon, self.basecolor.a)
 
 		-- killer name
-		local nx = x + edge_padding + box_size + inner_padding
-		local ny = y + edge_padding + inner_padding - 4 * self.scale
+		draw.AdvancedText(
+			string.upper(KILLER_INFO.data.killer_name),
+			"PureSkinBar",
+			offsetContentX,
+			y + paddingEdge + paddingInner - 4 * self.scale,
+			colorTextBase,
+			TEXT_ALIGN_LEFT,
+			TEXT_ALIGN_TOP,
+			true,
+			self.scale
+		)
 
-		local killer_name = string.upper(KILLER_INFO.data.killer_name)
-		draw.AdvancedText(killer_name, "PureSkinBar", nx, ny, util.GetDefaultColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
-
-		local health_icon = icon_health
+		local materialHealth = materialHealth
 
 		if KILLER_INFO.data.killer_health <= KILLER_INFO.data.killer_max_health * 0.25 then
-			health_icon = icon_health_low
+			materialHealth = materialHealthLow
 		end
 
 		-- killer hp
-		local bh = 26 * self.scale --  bar height
-		local bx = nx
-		local by = y + edge_padding + box_size - bh - inner_padding
-		local bw = w - (bx - x) - inner_padding -- bar width
+		self:DrawBar(
+			offsetContentX,
+			yHealthBar,
+			widthBar,
+			heightBar,
+			colorHealth,
+			KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_max_health,
+			self.scale
+		)
 
-		self:DrawBar(bx, by, bw, bh, color_health, KILLER_INFO.data.killer_health / KILLER_INFO.data.killer_max_health, self.scale)
-
-		local a_size = bh - 11 * self.scale
-		local a_pad = 5 * self.scale
-
-		local a_pos_y = by + a_pad
-		local a_pos_x = bx + 0.5 * a_size
-
-		local at_pos_y = by + 1 * self.scale
-		local at_pos_x = a_pos_x + a_size + a_pad
-
-		draw.FilteredShadowedTexture(a_pos_x, a_pos_y, a_size, a_size, health_icon, 255, COLOR_WHITE, self.scale)
-		draw.AdvancedText(KILLER_INFO.data.killer_health, "PureSkinBar", at_pos_x, at_pos_y, util.GetDefaultColor(color_health), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, true, self.scale)
+		draw.FilteredShadowedTexture(xBarIcon, yHealthBarContent, sizeBarIcon, sizeBarIcon, materialHealth, colorHealthContent.a, colorHealthContent, self.scale)
+		draw.AdvancedText(
+			KILLER_INFO.data.killer_health,
+			"PureSkinBar",
+			xBarText,
+			yHealthBar + 0.5 * heightBar - 1 * self.scale,
+			colorHealthContent,
+			TEXT_ALIGN_LEFT,
+			TEXT_ALIGN_CENTER,
+			true,
+			self.scale
+		)
 
 		-- draw armor information
 		if not GetGlobalBool("ttt_armor_classic", false) and KILLER_INFO.data.killer_armor > 0 then
-			local icon_mat = LocalPlayer():ArmorIsReinforced() and icon_armor_rei or icon_armor
+			local materialArmor = LocalPlayer():ArmorIsReinforced() and materialArmorReinforced or materialArmorDefault
 
-			a_pos_x = nx + bw - 65 * self.scale
-			at_pos_x = a_pos_x + a_size + a_pad
+			local xArmorIcon = offsetContentX + widthBar - 65 * self.scale
+			local xArmorText = xArmorIcon + sizeBarIcon + paddingSmall
 
-			draw.FilteredShadowedTexture(a_pos_x, a_pos_y, a_size, a_size, icon_mat, 255, COLOR_WHITE, self.scale)
-
-			draw.AdvancedText(KILLER_INFO.data.killer_armor, "PureSkinBar", at_pos_x, at_pos_y, COLOR_WHITE, TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, true, self.scale)
+			draw.FilteredShadowedTexture(xArmorIcon, yHealthBarContent, sizeBarIcon, sizeBarIcon, materialArmor, colorHealthContent.a, colorHealthContent, self.scale)
+			draw.AdvancedText(
+				KILLER_INFO.data.killer_armor,
+				"PureSkinBar",
+				xArmorText,
+				yHealthBar + 0.5 * heightBar - 1 * self.scale,
+				colorHealthContent,
+				TEXT_ALIGN_LEFT,
+				TEXT_ALIGN_CENTER,
+				true,
+				self.scale
+			)
 		end
 
 		-- killer role
 		if KILLER_INFO.data.mode ~= "killer_world" then
-			draw.FilteredShadowedTexture(x + edge_padding + 0.5 * (box_size - sizeRoleIcon), y + edge_padding + box_size + inner_padding, sizeRoleIcon, sizeRoleIcon, KILLER_INFO.data.killer_role_icon, 255, COLOR_WHITE, self.scale)
+			draw.FilteredShadowedTexture(
+				x + paddingEdge + 0.5 * (sizeColorBar2 - sizeRoleIcon),
+				y + paddingEdge + sizeColorBar2 + paddingInner,
+				sizeRoleIcon,
+				sizeRoleIcon,
+				KILLER_INFO.data.killer_role_icon,
+				colorTextBase.a,
+				colorTextBase,
+				self.scale
+			)
 		end
 
 		if KILLER_INFO.data.mode == "killer_self_no_weapon" or KILLER_INFO.data.mode == "killer_no_weapon" or KILLER_INFO.data.mode == "killer_world" then
-			local wx = x + edge_padding + box_size + inner_padding
-			local wy = y + edge_padding + box_size + inner_padding
+			local xWeapon = x + paddingEdge + sizeColorBar2 + paddingInner
+			local yWeapon = y + paddingEdge + sizeColorBar2 + paddingInner
 
-			draw.FilteredShadowedTexture(wx, wy, sizeWeaponIcon, sizeWeaponIcon, KILLER_INFO.data.damage_type_icon)
-			self:DrawLines(wx, wy, sizeWeaponIcon, sizeWeaponIcon, self.basecolor.a * 0.75)
+			draw.FilteredTexture(xWeapon, yWeapon, sizeWeaponIcon, sizeWeaponIcon, KILLER_INFO.data.damage_type_icon)
+			self:DrawLines(xWeapon, yWeapon, sizeWeaponIcon, sizeWeaponIcon, self.basecolor.a * 0.75)
 
-			local damage_type_name = string.upper(KILLER_INFO.data.damage_type_name)
-			draw.AdvancedText(damage_type_name, "PureSkinBar", wx + offsetX, wy + 5 * self.scale, util.GetDefaultColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+			draw.AdvancedText(
+				string.upper(KILLER_INFO.data.damage_type_name),
+				"PureSkinBar",
+				xWeapon + offsetX,
+				yWeapon + 5 * self.scale,
+				colorTextBase,
+				TEXT_ALIGN_LEFT,
+				TEXT_ALIGN_TOP,
+				true,
+				self.scale
+			)
+
 			return
 		end
 
 		-- killer weapon info
-		local wx = x + edge_padding + box_size + inner_padding
-		local wy = y + edge_padding + box_size + inner_padding
+		local xWeapon = x + paddingEdge + sizeColorBar2 + paddingInner
+		local yWeapon = y + paddingEdge + sizeColorBar2 + paddingInner
 
 		-- killer weapon icon
-		draw.FilteredTexture(wx, wy, sizeWeaponIcon, sizeWeaponIcon, KILLER_INFO.data.killer_weapon_icon)
-		self:DrawLines(wx, wy, sizeWeaponIcon, sizeWeaponIcon, self.basecolor.a * 0.75)
+		draw.FilteredTexture(xWeapon, yWeapon, sizeWeaponIcon, sizeWeaponIcon, KILLER_INFO.data.killer_weapon_icon)
+		self:DrawLines(xWeapon, yWeapon, sizeWeaponIcon, sizeWeaponIcon, self.basecolor.a * 0.75)
 
 		-- killer weapon name
-		local weapon_name = string.upper(KILLER_INFO.data.killer_weapon_name)
-		draw.AdvancedText(weapon_name, "PureSkinBar", wx + offsetX, wy + 5 * self.scale, util.GetDefaultColor(self.basecolor), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, true, self.scale)
+		draw.AdvancedText(
+			string.upper(KILLER_INFO.data.killer_weapon_name),
+			"PureSkinBar",
+			xWeapon + offsetX,
+			yWeapon + 5 * self.scale,
+			colorTextBase,
+			TEXT_ALIGN_LEFT,
+			TEXT_ALIGN_TOP,
+			true,
+			self.scale
+		)
 
 		-- killer weapon headshot
 		if KILLER_INFO.data.killer_weapon_head then
-			draw.FilteredShadowedTexture(x + w - inner_padding - sizeHeadshotIcon, wy + 3 * self.scale, sizeHeadshotIcon, sizeHeadshotIcon, self.icon_headshot, color_headshot.a, color_headshot)
+			draw.FilteredShadowedTexture(
+				x + w - paddingInner - sizeHeadshotIcon,
+				yWeapon + 3 * self.scale,
+				sizeHeadshotIcon,
+				sizeHeadshotIcon,
+				self.icon_headshot,
+				colorHeadshot.a,
+				colorHeadshot
+			)
 		end
 
 		-- killer ammo
-		local ah = 26 * self.scale -- bar height
-		local ax = wx
-		local ay = y + h - inner_padding - ah
-		local aw = w - (wx - x) - inner_padding  -- bar width
-
 		if KILLER_INFO.data.killer_weapon_clip >= 0 then
-			local text = string.format("%i + %02i", KILLER_INFO.data.killer_weapon_clip, KILLER_INFO.data.killer_weapon_ammo)
-			local icon_mat = BaseClass.BulletIcons[ammo_type] or mat_tid_ammo
+			local materialArmor = BaseClass.BulletIcons[ammo_type] or mat_tid_ammo
 
-			self:DrawBar(ax, ay, aw, ah, color_ammoBar, KILLER_INFO.data.killer_weapon_clip / KILLER_INFO.data.killer_weapon_clip_max, self.scale)
+			self:DrawBar(
+				offsetContentX,
+				yAmmoBar,
+				widthBar,
+				heightBar,
+				colorAmmo,
+				KILLER_INFO.data.killer_weapon_clip / KILLER_INFO.data.killer_weapon_clip_max,
+				self.scale
+			)
 
-			a_pos_x = nx + 0.5 * a_size
-			a_pos_y = ay + a_pad
-			at_pos_y = ay + 1 * self.scale
-			at_pos_x = a_pos_x + a_size + a_pad
-
-			draw.FilteredShadowedTexture(a_pos_x, a_pos_y, a_size, a_size, icon_mat, 255, COLOR_WHITE, self.scale)
-			draw.AdvancedText(text, "PureSkinBar", at_pos_x, at_pos_y, util.GetDefaultColor(color_ammoBar), TEXT_ALIGN_LEFT, TEXT_ALIGN_LEFT, true, self.scale)
+			draw.FilteredShadowedTexture(xBarIcon, yAmmoBarContent, sizeBarIcon, sizeBarIcon, materialArmor, colorAmmoContent.a, colorAmmoContent, self.scale)
+			draw.AdvancedText(
+				string.format("%i + %02i", KILLER_INFO.data.killer_weapon_clip, KILLER_INFO.data.killer_weapon_ammo),
+				"PureSkinBar",
+				xBarText,
+				yAmmoBar + 0.5 * heightBar - 1 * self.scale,
+				colorAmmoContent,
+				TEXT_ALIGN_LEFT,
+				TEXT_ALIGN_CENTER,
+				true,
+				self.scale
+			)
 		end
 	end
 end
