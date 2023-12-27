@@ -138,28 +138,31 @@ if SERVER then
 			return
 		end
 
-		local was_headshot, wep_clip, wep_clip_max, wep_ammo
+		local was_headshot, wep_clip, wep_clip_max, wep_ammo, wep_ammo_type
 
 		if wep_class["Clip1"] == nil or wep_class["GetMaxClip1"] == nil or wep_class["Ammo1"] == nil then -- weapon without any clip like a thrown knife
 			was_headshot = false
 			wep_clip = -1
 			wep_clip_max = -1
-			wep_ammo = -1
+			wep_ammo_type = -1
 		else -- default case
 			was_headshot = victim.was_headshot and dmg:IsBulletDamage()
 			wep_clip = wep_class:Clip1()
 			wep_clip_max = wep_class:GetMaxClip1()
 			wep_ammo = wep_class:Ammo1()
+			wep_ammo_type = wep_class:GetPrimaryAmmoType()
 
 			-- check if values are numbers (e.g. snowball has a boolean for ammo)
 			if type(wep_clip) ~= "number" then wep_clip = -1 end
 			if type(wep_clip_max) ~= "number" then wep_clip_max = -1 end
 			if type(wep_ammo) ~= "number" then wep_ammo = -1 end
+			if type(wep_ammo_type) ~= "number" then wep_ammo_type = -1 end
 
 			-- make sure all values are integers
 			wep_clip = math.floor(wep_clip -1)
 			wep_clip_max = math.floor(wep_clip_max)
 			wep_ammo = math.floor(wep_ammo)
+			wep_ammo_type = math.floor(wep_ammo_type)
 		end
 
 		net.WriteBool(true)
@@ -167,6 +170,7 @@ if SERVER then
 		net.WriteInt(wep_clip, 16)
 		net.WriteInt(wep_clip_max, 16)
 		net.WriteInt(wep_ammo, 16)
+		net.WriteInt(wep_ammo_type, 16)
 		net.WriteBool(was_headshot)
 
 		net.Send(victim)

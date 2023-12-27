@@ -98,9 +98,10 @@ if CLIENT then
 				local wep_clip = net.ReadInt(16)
 				local wep_clip_max = net.ReadInt(16)
 				local wep_ammo = net.ReadInt(16)
+				local wep_ammo_type = net.ReadInt(16)
 				local was_headshot = net.ReadBool()
 
-				KILLER_INFO:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_icon, was_headshot)
+				KILLER_INFO:RegisterWeapon(wep_name, wep_clip, wep_clip_max, wep_ammo, wep_ammo_type, wep_icon, was_headshot)
 
 				if killer_type == 1 then
 					if killer_popup then KILLER_INFO:DisplayPopupKillerWeapon(display_time) end

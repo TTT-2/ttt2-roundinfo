@@ -19,6 +19,7 @@ if CLIENT then
 		killer_weapon_clip = 3,
 		killer_weapon_clip_max = 10,
 		killer_weapon_ammo = 40,
+		killer_weapon_ammo_type = 7,
 		killer_weapon_icon = Material("vgui/ttt/icon_nades"),
 		killer_weapon_head = true,
 		damage_type_name = "TYPE",
@@ -50,11 +51,12 @@ if CLIENT then
 		self.data.killer_armor_max = armor_max
 	end
 
-	function KILLER_INFO:RegisterWeapon(name, clip, clip_max, ammo, icon_path, headshot)
+	function KILLER_INFO:RegisterWeapon(name, clip, clip_max, ammo, ammo_type, icon_path, headshot)
 		self.data.killer_weapon_name = LANG.TryTranslation(name)
 		self.data.killer_weapon_clip = clip
 		self.data.killer_weapon_clip_max = clip_max
 		self.data.killer_weapon_ammo = ammo
+		self.data.killer_weapon_ammo_type = ammo_type
 		self.data.killer_weapon_icon = Material(icon_path)
 		self.data.killer_weapon_head = headshot
 	end
