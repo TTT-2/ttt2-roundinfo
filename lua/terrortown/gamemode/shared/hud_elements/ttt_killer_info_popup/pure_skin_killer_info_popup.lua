@@ -276,7 +276,7 @@ if CLIENT then -- CLIENT
 
 		-- killer ammo
 		if KILLER_INFO.data.killer_weapon_clip >= 0 then
-			local ammo_type = string.lower(game.GetAmmoTypes()[KILLER_INFO.data.killer_ammo_type] or "")
+			local ammo_type = string.lower( game.GetAmmoTypes()[KILLER_INFO.data.killer_weapon_ammo_type] or "" )
 			local materialArmor = BaseClass.BulletIcons[ammo_type] or mat_tid_ammo
 
 			self:DrawBar(
