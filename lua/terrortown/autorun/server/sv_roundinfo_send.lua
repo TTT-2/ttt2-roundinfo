@@ -92,7 +92,7 @@ if SERVER then
 
 		-- send damage type
 		local damage_type = dmg:GetDamageType()
-		net.WriteUInt(damage_type, 32)
+		net.WriteUInt(damage_type or DMG_GENERIC, 32)
 
 		-- killed by world
 		if not IsValid(killer) or not killer:IsPlayer() then
@@ -103,8 +103,10 @@ if SERVER then
 				net.Send(victim)
 				return
 			end
+
 			net.WriteUInt(3, 2)
 			net.Send(victim)
+
 			return
 		end
 
@@ -125,8 +127,8 @@ if SERVER then
 			net.WriteUInt(killer_role_color.a, 8)
 
 			-- send armor of killer
-			net.WriteUInt(killer:GetArmor(), 16)
-			net.WriteUInt(killer:GetMaxArmor(), 16)
+			net.WriteUInt(killer:GetArmor() or 0, 16)
+			net.WriteUInt(killer:GetMaxArmor() or 0, 16)
 		end
 
 		--local wep_class = attacker:GetActiveWeapon()
@@ -167,11 +169,11 @@ if SERVER then
 
 		net.WriteBool(true)
 		net.WriteString(wep_class:GetClass() or "undefined")
-		net.WriteInt(wep_clip, 16)
-		net.WriteInt(wep_clip_max, 16)
-		net.WriteInt(wep_ammo, 16)
-		net.WriteInt(wep_ammo_type, 16)
-		net.WriteBool(was_headshot)
+		net.WriteInt(wep_clip or 0, 16)
+		net.WriteInt(wep_clip_max or 0, 16)
+		net.WriteInt(wep_ammo or 0, 16)
+		net.WriteInt(wep_ammo_type or 0, 16)
+		net.WriteBool(was_headshot or false)
 
 		net.Send(victim)
 	end
