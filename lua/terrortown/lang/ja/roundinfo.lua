@@ -1,7 +1,7 @@
 local L = LANG.GetLanguageTableReference("ja")
 
 L["ttt_rs_preText"] = "0%このラウンドでは%1%Traitor%0%が{traits}人、%2%Innocent%0%が{innos}人、そして%3%Spectator%0%が{specs}人います。"
-L["ttt_rs_preText_combined"] = "役職内訳:"
+L["ttt_rs_preText_combined"] = "今ラウンドの詳細な役職内訳:"
 L["ttt_rs_postText"] = "このラウンドの役職の内訳:"
 L["ttt_rs_killText"] = "0%あなたは%1%{killer}%0%により殺されました。役職:%2%{role}%0%. (死因:{killtype})"
 L["ttt_rs_suicideText"] = "0%あなたは自滅してしまいました...(死因：{killtype})"
