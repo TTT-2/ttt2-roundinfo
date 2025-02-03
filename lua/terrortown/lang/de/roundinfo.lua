@@ -1,7 +1,7 @@
 local L = LANG.GetLanguageTableReference("de")
 
 L["ttt_rs_preText"] = "0%Es gibt %1%{traits} Verräter%0%, %2%{innos} Unschuldige%0% und %3%{specs} Zuschauer%0% diese Runde."
-L["ttt_rs_preText_combined"] = "Detaillierte Rollenverteilung diese Runde:"
+L["ttt_rs_preText_detailed"] = "Detaillierte Rollenverteilung diese Runde:"
 L["ttt_rs_postText"] = "Die Rollenverteilung diese Runde:"
 L["ttt_rs_killText"] = "0%Du wurdest von %1%{killer}%0% getötet. Rolle: %2%{role}%0%. (Art: {killtype})"
 L["ttt_rs_suicideText"] = "0%Du hast dich selbst getötet! (Art: {killtype})"

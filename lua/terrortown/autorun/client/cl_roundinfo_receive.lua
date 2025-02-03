@@ -47,7 +47,7 @@ if CLIENT then
 		local messageParts = {
 			"\n", -- Initial newline
 			defcolor, 
-			T("ttt_rs_preText_combined"),
+			T("ttt_rs_preText_detailed"),
 			"\n" -- Start first role on new line
 		}
 
