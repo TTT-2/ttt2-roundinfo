@@ -71,10 +71,10 @@ if SERVER then
 
 		if GetConVar("ttt_roundinfo_pre_announce_detailed"):GetBool() then
 			net.Start("tttRsTellPreDetailed")
-			net.WriteUInt(table.Count(rolesnamestext), ROLE_BITS)
-			for role, names in pairs(rolesnamestext) do
+			net.WriteUInt(table.Count(rolesnames), ROLE_BITS)
+			for role, nicks in pairs(rolesnames) do
 				net.WriteUInt(role, ROLE_BITS)
-				net.WriteString(names)
+				net.WriteUInt(#nicks, 32)
 			end
 			net.Broadcast()
 		elseif GetConVar("ttt_roundinfo_pre_announce_distribution"):GetBool() then
