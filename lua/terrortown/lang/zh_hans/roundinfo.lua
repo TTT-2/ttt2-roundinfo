@@ -1,6 +1,7 @@
 local L = LANG.GetLanguageTableReference("zh_hans")
 
 L["ttt_rs_preText"] = "0%本轮有 %1%{traits} 名叛徒%0%,%2%{innos} 名无辜者%0% 和 %3%{specs} 名旁观者%0%."
+L["ttt_rs_preText_combined"] = "角色分配:"
 L["ttt_rs_postText"] = "本轮角色分配:"
 L["ttt_rs_killText"] = "0%你被 %1%{killer}%0% 杀死了. 角色: %2%{role}%0%. (类型: {killtype})"
 L["ttt_rs_suicideText"] = "0%你被一个自称为你的人杀死了......(类型: {killtype})"

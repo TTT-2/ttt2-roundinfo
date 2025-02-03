@@ -28,31 +28,62 @@ if CLIENT then
 	end)
 
 	net.Receive("tttRsTellPreDetailed", function(len)
-	    local defcolor = Color(255, 255, 255, 255)
-	    local T = LANG.GetTranslation
-	    local rolecounts = {}
-	    local rolesSize = net.ReadUInt(ROLE_BITS)
-	
-	    for i = 1, rolesSize do
-	        local role = net.ReadUInt(ROLE_BITS)
-	        local count = net.ReadUInt(32)  -- Read count instead of names
-	        rolecounts[role] = count
-	    end
-	
-	    local parts = {}
-	    for role, count in SortedPairs(rolecounts) do
-	        local rd = GetRoleByIndex(role)
-	        if rd then
-	            table.insert(parts, rd.color)
-	            table.insert(parts, T(rd.name) .. ": " .. count)
-	            table.insert(parts, defcolor)
-	            table.insert(parts, ", ")
-	        end
-	    end
-	    if #parts > 0 then
-	        parts[#parts] = nil  -- Remove trailing comma
-	        chat.AddText(defcolor, LANG.GetTranslation("ttt_rs_preDetailedText"), unpack(parts))
-	    end
+		local defcolor = Color(255, 255, 255, 255)
+		local namecolor = Color(255, 235, 135, 255)
+		local T = LANG.GetTranslation
+		
+		local rolecounts = {}
+		local rolesSize = net.ReadUInt(ROLE_BITS)
+		
+		for i = 1, rolesSize do
+			local role = net.ReadUInt(ROLE_BITS)
+			local count = net.ReadUInt(32)
+			rolecounts[role] = count
+		end
+
+		local spectators = net.ReadUInt(9)
+		
+		-- Build message parts
+		local messageParts = {defcolor, T("ttt_rs_preText_combined")}
+		
+		-- Add roles
+		local sortedRoles = {}
+		for role in pairs(rolecounts) do
+			table.insert(sortedRoles, role)
+		end
+		
+		table.sort(sortedRoles, function(a, b)
+			return GetRoleByIndex(a).index < GetRoleByIndex(b).index
+		end)
+
+		for i, role in ipairs(sortedRoles) do
+			local count = rolecounts[role]
+			local rd = GetRoleByIndex(role)
+			if count > 0 and rd then
+				if i > 1 then
+					table.insert(messageParts, defcolor)
+					table.insert(messageParts, ", ")
+				end
+				table.insert(messageParts, rd.color)
+				table.insert(messageParts, T(rd.name))
+				table.insert(messageParts, defcolor)
+				table.insert(messageParts, ": ")
+				table.insert(messageParts, namecolor)
+				table.insert(messageParts, tostring(count))
+			end
+		end
+
+		-- Add spectators
+		table.insert(messageParts, defcolor)
+		table.insert(messageParts, ", ")
+		table.insert(messageParts, team.GetColor(TEAM_SPEC))
+		table.insert(messageParts, T("spectators"))
+		table.insert(messageParts, defcolor)
+		table.insert(messageParts, ": ")
+		table.insert(messageParts, namecolor)
+		table.insert(messageParts, tostring(spectators))
+
+		chat.AddText(unpack(messageParts))
 	end)
 
 	net.Receive("tttRsDeathNotify", function(len)

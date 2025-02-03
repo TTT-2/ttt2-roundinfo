@@ -76,6 +76,7 @@ if SERVER then
 				net.WriteUInt(role, ROLE_BITS)
 				net.WriteUInt(#nicks, 32)
 			end
+			net.WriteUInt(spectators, 9)
 			net.Broadcast()
 		elseif GetConVar("ttt_roundinfo_pre_announce_distribution"):GetBool() then
 			net.Start("tttRsTellPre")
