@@ -6,14 +6,17 @@ CLGAMEMODESUBMENU.title = "submenu_server_addons_roundinfo_title"
 function CLGAMEMODESUBMENU:Populate(parent)
 	local chatmsgs = vgui.CreateTTT2Form(parent, "header_addons_roundinfo_chat")
 
-	chatmsgs:MakeCheckBox({
+	-- Create basic distribution checkbox first
+	local distributionCheck = chatmsgs:MakeCheckBox({
 		serverConvar = "ttt_roundinfo_pre_announce_distribution",
 		label = "label_roundinfo_pre_announce_distribution"
 	})
 
+	-- Detailed announcement depends on basic distribution being enabled
 	chatmsgs:MakeCheckBox({
 		serverConvar = "ttt_roundinfo_pre_announce_detailed",
-		label = "label_roundinfo_pre_announce_detailed"
+		label = "label_roundinfo_pre_announce_detailed",
+		master = distributionCheck  -- Only enabled when distribution is checked
 	})
 
 	chatmsgs:MakeCheckBox({

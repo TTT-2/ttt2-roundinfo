@@ -69,7 +69,8 @@ if SERVER then
 			end
 		end
 
-		if GetConVar("ttt_roundinfo_pre_announce_detailed"):GetBool() then
+		if GetConVar("ttt_roundinfo_pre_announce_detailed"):GetBool() 
+		and GetConVar("ttt_roundinfo_pre_announce_distribution"):GetBool() then
 			net.Start("tttRsTellPreDetailed")
 			net.WriteUInt(table.Count(rolesnames), ROLE_BITS)
 			for role, nicks in pairs(rolesnames) do

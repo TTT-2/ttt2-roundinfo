@@ -45,12 +45,14 @@ if CLIENT then
 		
 		-- Build message parts starting with header
 		local messageParts = {
+			"\n", -- Initial newline
 			defcolor, 
 			T("ttt_rs_preText_combined"),
 			"\n" -- Start first role on new line
 		}
 
 		-- Add roles
+		local hasRoles = false
 		local sortedRoles = {}
 		for role in pairs(rolecounts) do
 			table.insert(sortedRoles, role)
@@ -64,6 +66,8 @@ if CLIENT then
 			local count = rolecounts[role]
 			local rd = GetRoleByIndex(role)
 			if count > 0 and rd then
+				hasRoles = true
+				
 				-- Add role line
 				table.insert(messageParts, rd.color)
 				table.insert(messageParts, T(rd.name))
@@ -72,21 +76,20 @@ if CLIENT then
 				table.insert(messageParts, namecolor)
 				table.insert(messageParts, tostring(count))
 				
-				-- Add newline for next role (except after last role)
-				if i < #sortedRoles then
-					table.insert(messageParts, "\n")
-				end
+				-- Add newline for next role
+				table.insert(messageParts, "\n")
 			end
 		end
 
-		-- Add spectators on new line
-		table.insert(messageParts, "\n")
-		table.insert(messageParts, team.GetColor(TEAM_SPEC))
-		table.insert(messageParts, T("spectators"))
-		table.insert(messageParts, defcolor)
-		table.insert(messageParts, ": ")
-		table.insert(messageParts, namecolor)
-		table.insert(messageParts, tostring(spectators))
+		-- Add spectators only if there are any or roles existed
+		if spectators > 0 or hasRoles then
+			table.insert(messageParts, team.GetColor(TEAM_SPEC))
+			table.insert(messageParts, T("spectators"))
+			table.insert(messageParts, defcolor)
+			table.insert(messageParts, ": ")
+			table.insert(messageParts, namecolor)
+			table.insert(messageParts, tostring(spectators))
+		end
 
 		chat.AddText(unpack(messageParts))
 	end)
