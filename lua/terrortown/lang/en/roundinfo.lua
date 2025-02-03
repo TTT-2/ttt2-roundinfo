@@ -27,3 +27,5 @@ L["label_roundinfo_post_announce_distribution"] = "Announce Distribution Post-Ro
 L["label_roundinfo_announce_killer"] = "Announce Killer"
 L["label_roundinfo_popup_killer"] = "Show Killer Info"
 L["label_roundinfo_popup_killer_time"] = "Show Killer Info Duration"
+L["ttt_rs_preDetailedText"] = "Detailed role distribution this round:"
+L["label_roundinfo_pre_announce_detailed"] = "Announce Detailed Distribution Pre-Round"

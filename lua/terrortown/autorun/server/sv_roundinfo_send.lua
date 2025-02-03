@@ -5,12 +5,14 @@ if SERVER then
 	CreateConVar("ttt_roundinfo_popup_killer", 1, flags)
 	CreateConVar("ttt_roundinfo_popup_killer_time", 10, flags)
 	CreateConVar("ttt_roundinfo_post_announce_distribution", 1, flags)
+	CreateConVar("ttt_roundinfo_pre_announce_detailed", 0, flags)
 
 	util.AddNetworkString("tttRsTellPre")
 	util.AddNetworkString("tttRsTellPost")
 	util.AddNetworkString("tttRsDeathNotify")
 	util.AddNetworkString("tttRsDeathNotifyEnhanced")
 	util.AddNetworkString("tttRsPlayerRespawn")
+	util.AddNetworkString("tttRsTellPreDetailed")
 
 	-- ROUND SETUP INFORMATION
 	function TellRoles()
@@ -67,18 +69,26 @@ if SERVER then
 			end
 		end
 
-		if not GetConVar("ttt_roundinfo_pre_announce_distribution"):GetBool() then return end
+		if GetConVar("ttt_roundinfo_pre_announce_detailed"):GetBool() then
+			net.Start("tttRsTellPreDetailed")
+			net.WriteUInt(table.Count(rolesnamestext), ROLE_BITS)
+			for role, names in pairs(rolesnamestext) do
+				net.WriteUInt(role, ROLE_BITS)
+				net.WriteString(names)
+			end
+			net.Broadcast()
+		elseif GetConVar("ttt_roundinfo_pre_announce_distribution"):GetBool() then
+			net.Start("tttRsTellPre")
+			net.WriteUInt(table.Count(rls), ROLE_BITS)
 
-		net.Start("tttRsTellPre")
-		net.WriteUInt(table.Count(rls), ROLE_BITS)
+			for role, amount in pairs(rls) do
+				net.WriteUInt(role, ROLE_BITS)
+				net.WriteUInt(amount, 32)
+			end
 
-		for role, amount in pairs(rls) do
-			net.WriteUInt(role, ROLE_BITS)
-			net.WriteUInt(amount, 32)
+			net.WriteUInt(spectators, 9)
+			net.Broadcast()
 		end
-
-		net.WriteUInt(spectators, 9)
-		net.Broadcast()
 	end
 	hook.Add("TTTBeginRound", "TTTChatStats", TellRoles)
 

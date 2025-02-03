@@ -27,6 +27,27 @@ if CLIENT then
 		chat.AddText(unpack(arr)) -- convert table to list of vars
 	end)
 
+	net.Receive("tttRsTellPreDetailed", function(len)
+		local defcolor = Color(255, 255, 255, 255)
+		local T = LANG.GetTranslation
+		local rolesnames = {}
+		local rolesSize = net.ReadUInt(ROLE_BITS)
+		for i = 1, rolesSize do
+			local role = net.ReadUInt(ROLE_BITS)
+			local names = net.ReadString()
+			rolesnames[role] = names
+		end
+
+		chat.AddText(defcolor, LANG.GetTranslation("ttt_rs_preDetailedText"))
+		for role, names in pairs(rolesnames) do
+			local rd = GetRoleByIndex(role)
+			if rd then
+				local txt = string.format(" %s: %s", T(rd.name), names)
+				chat.AddText(rd.color, txt)
+			end
+		end
+	end)
+
 	net.Receive("tttRsDeathNotify", function(len)
 		-- how long should the panel be displayed
 		local display_time = net.ReadUInt(16)

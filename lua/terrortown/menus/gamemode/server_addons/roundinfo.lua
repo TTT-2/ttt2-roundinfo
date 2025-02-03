@@ -12,6 +12,11 @@ function CLGAMEMODESUBMENU:Populate(parent)
 	})
 
 	chatmsgs:MakeCheckBox({
+		serverConvar = "ttt_roundinfo_pre_announce_detailed",
+		label = "label_roundinfo_pre_announce_detailed"
+	})
+
+	chatmsgs:MakeCheckBox({
 		serverConvar = "ttt_roundinfo_post_announce_distribution",
 		label = "label_roundinfo_post_announce_distribution"
 	})
