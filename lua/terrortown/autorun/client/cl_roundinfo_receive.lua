@@ -43,9 +43,13 @@ if CLIENT then
 
 		local spectators = net.ReadUInt(9)
 		
-		-- Build message parts
-		local messageParts = {defcolor, T("ttt_rs_preText_combined")}
-		
+		-- Build message parts starting with header
+		local messageParts = {
+			defcolor, 
+			T("ttt_rs_preText_combined"),
+			"\n" -- Start first role on new line
+		}
+
 		-- Add roles
 		local sortedRoles = {}
 		for role in pairs(rolecounts) do
@@ -60,22 +64,23 @@ if CLIENT then
 			local count = rolecounts[role]
 			local rd = GetRoleByIndex(role)
 			if count > 0 and rd then
-				if i > 1 then
-					table.insert(messageParts, defcolor)
-					table.insert(messageParts, ", ")
-				end
+				-- Add role line
 				table.insert(messageParts, rd.color)
 				table.insert(messageParts, T(rd.name))
 				table.insert(messageParts, defcolor)
 				table.insert(messageParts, ": ")
 				table.insert(messageParts, namecolor)
 				table.insert(messageParts, tostring(count))
+				
+				-- Add newline for next role (except after last role)
+				if i < #sortedRoles then
+					table.insert(messageParts, "\n")
+				end
 			end
 		end
 
-		-- Add spectators
-		table.insert(messageParts, defcolor)
-		table.insert(messageParts, ", ")
+		-- Add spectators on new line
+		table.insert(messageParts, "\n")
 		table.insert(messageParts, team.GetColor(TEAM_SPEC))
 		table.insert(messageParts, T("spectators"))
 		table.insert(messageParts, defcolor)

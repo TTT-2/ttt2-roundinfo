@@ -1,11 +1,11 @@
 if SERVER then
 	local flags = {FCVAR_NOTIFY, FCVAR_ARCHIVE}
 	CreateConVar("ttt_roundinfo_pre_announce_distribution", 1, flags)
+	CreateConVar("ttt_roundinfo_pre_announce_detailed", 0, flags)
 	CreateConVar("ttt_roundinfo_announce_killer", 1, flags)
 	CreateConVar("ttt_roundinfo_popup_killer", 1, flags)
 	CreateConVar("ttt_roundinfo_popup_killer_time", 10, flags)
 	CreateConVar("ttt_roundinfo_post_announce_distribution", 1, flags)
-	CreateConVar("ttt_roundinfo_pre_announce_detailed", 0, flags)
 
 	util.AddNetworkString("tttRsTellPre")
 	util.AddNetworkString("tttRsTellPost")
