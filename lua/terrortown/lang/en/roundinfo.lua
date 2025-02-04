@@ -1,6 +1,7 @@
 local L = LANG.GetLanguageTableReference("en")
 
 L["ttt_rs_preText"] = "0%There are %1%{traits} traitors%0%, %2%{innos} innocents%0% and %3%{specs} spectators%0% this round."
+L["ttt_rs_preText_detailed"] = "Detailed role distribution this round:"
 L["ttt_rs_postText"] = "The role distribution this round:"
 L["ttt_rs_killText"] = "0%You were killed by %1%{killer}%0%. Role: %2%{role}%0%. (type: {killtype})"
 L["ttt_rs_suicideText"] = "0%You were killed by someone called yourself... (type: {killtype})"
@@ -27,3 +28,4 @@ L["label_roundinfo_post_announce_distribution"] = "Announce Distribution Post-Ro
 L["label_roundinfo_announce_killer"] = "Announce Killer"
 L["label_roundinfo_popup_killer"] = "Show Killer Info"
 L["label_roundinfo_popup_killer_time"] = "Show Killer Info Duration"
+L["label_roundinfo_pre_announce_detailed"] = "Announce Detailed Distribution Pre-Round"

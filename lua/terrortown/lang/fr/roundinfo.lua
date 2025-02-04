@@ -1,6 +1,7 @@
 local L = LANG.GetLanguageTableReference("fr")
 
 L["ttt_rs_preText"] = "0%Il y a %1%{traits} traitres%0%, %2%{innos} innocents%0% et %3%{specs} spectateurs%0% ce round."
+L["ttt_rs_preText_detailed"] = "Répartition détaillée des rôles ce round :"
 L["ttt_rs_postText"] = "La répartition des rôles du round:"
 L["ttt_rs_killText"] = "0%Vous avez été tué par %1%{killer}%0%. Rôle: %2%{role}%0%. (type: {killtype})"
 L["ttt_rs_suicideText"] = "0%Vous avez été tué par vous-même... (type: {killtype})"

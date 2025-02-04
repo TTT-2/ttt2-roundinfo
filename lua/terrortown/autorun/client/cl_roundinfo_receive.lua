@@ -27,6 +27,73 @@ if CLIENT then
 		chat.AddText(unpack(arr)) -- convert table to list of vars
 	end)
 
+	net.Receive("tttRsTellPreDetailed", function(len)
+		local defcolor = Color(255, 255, 255, 255)
+		local namecolor = Color(255, 235, 135, 255)
+		local T = LANG.GetTranslation
+		
+		local rolecounts = {}
+		local rolesSize = net.ReadUInt(ROLE_BITS)
+		
+		for i = 1, rolesSize do
+			local role = net.ReadUInt(ROLE_BITS)
+			local count = net.ReadUInt(32)
+			rolecounts[role] = count
+		end
+
+		local spectators = net.ReadUInt(9)
+		
+		-- Build message parts starting with header
+		local messageParts = {
+			"\n", -- Initial newline
+			defcolor, 
+			T("ttt_rs_preText_detailed"),
+			"\n" -- Start first role on new line
+		}
+
+		-- Add roles
+		local hasRoles = false
+		local sortedRoles = {}
+		for role in pairs(rolecounts) do
+			table.insert(sortedRoles, role)
+		end
+		
+		table.sort(sortedRoles, function(a, b)
+			return GetRoleByIndex(a).index < GetRoleByIndex(b).index
+		end)
+
+		for i, role in ipairs(sortedRoles) do
+			local count = rolecounts[role]
+			local rd = GetRoleByIndex(role)
+			if count > 0 and rd then
+				hasRoles = true
+				
+				-- Add role line
+				table.insert(messageParts, rd.color)
+				table.insert(messageParts, T(rd.name))
+				table.insert(messageParts, defcolor)
+				table.insert(messageParts, ": ")
+				table.insert(messageParts, namecolor)
+				table.insert(messageParts, tostring(count))
+				
+				-- Add newline for next role
+				table.insert(messageParts, "\n")
+			end
+		end
+
+		-- Add spectators only if there are any or roles existed
+		if spectators > 0 or hasRoles then
+			table.insert(messageParts, team.GetColor(TEAM_SPEC))
+			table.insert(messageParts, T("spectators"))
+			table.insert(messageParts, defcolor)
+			table.insert(messageParts, ": ")
+			table.insert(messageParts, namecolor)
+			table.insert(messageParts, tostring(spectators))
+		end
+
+		chat.AddText(unpack(messageParts))
+	end)
+
 	net.Receive("tttRsDeathNotify", function(len)
 		-- how long should the panel be displayed
 		local display_time = net.ReadUInt(16)
